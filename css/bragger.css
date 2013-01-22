@@ -226,9 +226,12 @@ ul.exampler.two li {
 	background: #DB1959;
 }
 
-/* ==RESUME */
-#resume .ul .category {
-    
+/* ==EDUCATION */
+#education #position-nyuad a {
+	background: #571590;
+}
+#education #position-uwc a {
+	background: #009086;
 }
 
 /* ==HACKNY */

@@ -1,13 +1,16 @@
 var manager = {
 	doc: {},
-	offset: 160,
+	offset: 180,
 	init: function() {
 		manager.doc.width = 800,
 		
 		resume.start();
 		skills.begin();
 		manager.examplers();
+		manager.navigation();
 		
+	},
+	navigation: function() {
 		$('a').smoothScroll({
 			offset: -1 * manager.offset
 		});
