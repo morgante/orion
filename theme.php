@@ -16,9 +16,12 @@ class Orion extends Theme
 	public function action_template_header( $theme )
 	{
 		Stack::add( 'template_header_javascript', Site::get_url('scripts') . '/jquery.js', 'jquery' );
-		
+		Stack::add( 'template_header_javascript', 'http://d3js.org/d3.v3.min.js', 'd3' );
+
 		Stack::add( 'template_stylesheet', array(Site::get_url('theme') . '/css/style.css', 'screen'), 'style' );
 		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/jscrollpane.js', 'jscrollpane', array('jquery') );
+		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/jquery.smooth-scroll.js', 'smooth-scroll', array('jquery') );
+		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/waypoints.jquery.js', 'waypoints', array('jquery') );
 		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/main.js', 'main', array('jquery', 'jscrollpane') );
 		
 	}	
@@ -120,6 +123,12 @@ class Orion extends Theme
 		}
 		
 		$theme->navigation = $pages;
+		
+		// default banner
+		$theme->banner = array(
+			'greeting' => '<h1>Hello.</h1><p>My name is <strong>Morgante Pell</strong>.</p>',
+			'definition' => false
+		);
 		
 	}
 
