@@ -1,7 +1,5 @@
 <?php
 
-namespace Habari;
-
 class Orion extends Theme
 {
 	
