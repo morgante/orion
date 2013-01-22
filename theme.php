@@ -15,14 +15,19 @@ class Orion extends Theme
 	
 	public function action_template_header( $theme )
 	{
+		Stack::add( 'template_stylesheet', array(Site::get_url('theme') . '/css/jquery.vectormap.css', 'screen'), 'vectormap' );
+		Stack::add( 'template_stylesheet', array(Site::get_url('theme') . '/css/style.css', 'screen'), 'style', array('vectormap') );
+		
+		
 		Stack::add( 'template_header_javascript', Site::get_url('scripts') . '/jquery.js', 'jquery' );
 		Stack::add( 'template_header_javascript', 'http://d3js.org/d3.v3.min.js', 'd3' );
-
-		Stack::add( 'template_stylesheet', array(Site::get_url('theme') . '/css/style.css', 'screen'), 'style' );
+		Stack::add( 'template_header_javascript', 'https://www.google.com/jsapi', 'google' );
 		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/jscrollpane.js', 'jscrollpane', array('jquery') );
+		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/jquery.vectormap.js', 'vectormap', array('jquery') );
+		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/maps/world.js', 'worldmap', array('vectormap') );
 		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/jquery.smooth-scroll.js', 'smooth-scroll', array('jquery') );
 		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/waypoints.jquery.js', 'waypoints', array('jquery') );
-		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/main.js', 'main', array('jquery', 'jscrollpane') );
+		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/main.js', 'main', array('jquery', 'jscrollpane', 'vectormap') );
 		
 	}	
 	

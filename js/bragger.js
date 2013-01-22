@@ -8,7 +8,38 @@ var manager = {
 		skills.begin();
 		manager.examplers();
 		manager.navigation();
+	
+		// manager.travel();
 		
+		// google.load('visualization', "1", {
+		// 	'packages': ['geomap'],
+		// 	'callback': manager.travel
+		// });
+		
+		$('#travel_map_canvas').vectorMap({map: 'world_mill_en'});
+		
+		
+	},
+	travel: function() {
+		var data = google.visualization.arrayToDataTable([
+			['City', 'Visit Length', 'When'],
+			['Vermont', 7, 'Grew up there'],
+			['New Mexico', 2, 'Grew up there'],
+		]);
+		
+		width = 280;
+		
+		var options = {
+			'region': 'world',
+			'colors': [0xFF8747, 0xFFB581, 0xc06000],
+			'dataMode': 'markers',
+			'width': width,
+			'height': (347/546) * width
+		};
+		
+		var container = document.getElementById('travel_map_canvas');
+		var geomap = new google.visualization.GeoMap(container);
+		geomap.draw(data, options);
 	},
 	navigation: function() {
 		$('a').smoothScroll({
