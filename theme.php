@@ -15,8 +15,8 @@ class Orion extends Theme
 	
 	public function action_template_header( $theme )
 	{
-		Stack::add( 'template_stylesheet', array(Site::get_url('theme') . '/css/jquery.vectormap.css', 'screen'), 'vectormap' );
-		Stack::add( 'template_stylesheet', array(Site::get_url('theme') . '/css/style.css', 'screen'), 'style', array('vectormap') );
+		// Stack::add( 'template_stylesheet', array(Site::get_url('theme') . '/css/jquery.vectormap.css', 'screen'), 'vectormapstyle' );
+		Stack::add( 'template_stylesheet', array(Site::get_url('theme') . '/css/style.css', 'screen'), 'style', array('vectormapstyle') );
 		
 		
 		Stack::add( 'template_header_javascript', Site::get_url('scripts') . '/jquery.js', 'jquery' );

@@ -1,15 +1,15 @@
 <?php
 $theme->banner = array(
-	'greeting' => '<h1>Hi there</h1><p>I&apos;m <strong class="name">Morgante</strong> and I would love to be a <strong class="purpose">HackNY 2013</strong> fellow.</p>',
+	'greeting' => '<h1>Hi there</h1><p>I&apos;m <strong class="name">Morgante</strong> and here are <strong class="count">8</strong> reasons to select me as a <strong class="purpose">HackNY 2013</strong> fellow.</p>',
 	'definition' => '<ol class="bragger navigation">
-	<li id="nav-skills"><a href="#skills">Skills</a></li>
+		<li id="nav-skills"><a href="#skills">Skills</a></li>
 	<li id="nav-entrepreneurship"><a href="#entrepreneurship">Entrepreneurship</a></li>
-	<li id="nav-education"><a href="#education">Education</a></li>
 	<li id="nav-experience"><a href="#experience">Experience</a></li>
 	<li id="nav-good"><a href="#good">Volunteering</a></li>
+	<li id="nav-education"><a href="#education">Education</a></li>
 	<li id="nav-projects"><a href="#projects">Projects</a></li>
-	<li id="nav-elsewhere"><a href="#elsewhere">Elsewhere</a></li>
-	<li id="nav-fun"><a href="#fun">Fun</a></li>
+	<li id="nav-elsewhere"><a href="#elsewhere">Web</a></li>
+	<li id="nav-fun"><a href="#fun">Passions</a></li>
 	</ol>'
 );
 
@@ -60,23 +60,27 @@ $theme->display('header');
 				</div>
 				<span class="clear"></span>
 			</section>
-
-			<section id="education">
+			
+			<section id="experience">
 				<header>
 					<div class="container">
-						<h2>I have a unique <strong>education</strong></h2>
+						<h2>I have deep <strong>experience</strong></h2>
 					</div>
 				</header>
 				<div class="container">
-					<p class="lede">My education has exposed me to diverse people and fields.</p>
-					<ul class="education positions exampler splitter two">
-						<li class="section position nyuad" id="position-nyuad">
-							<h2><a href="http://newlyancient.com/2012/04/25/nyuad"><span>Learn why I chose</span><em>New York University Abu Dhabi</em></a></h2>
-							<p>As a student at NYUAD, NYU's new <strong>honors college</strong> in the Middle East</em>, I study a <strong>liberal arts</strong> curriculum, concentrating in computer science, economics, and political science. As the chair of the student government's <strong>research &amp; development committee</strong>, I develop technical solutions for students, including an <strong>OAuth</strong>-based student directory written in <strong>Node.js</strong> and deployed on <strong>Heroku</strong>.</p>								
+					<p class="lede">I play well with others and have worked with startups in the past.</p>
+					<ul class="experience positions exampler splitter three">
+						<li class="section position globalclassroom" id="position-globalclassroom">
+							<h2><a href="http://globalclassroom.us/"><span>Visit</span><em>GlobalClassroom</em></a></h2>
+							<p>As a paid <strong>programming intern</strong> at <strong>GlobalClassroom</strong>, a Vermont e-learning <strong>startup</strong>, in <strong class="start">2008</strong>, I designed and developed interfaces for their online <strong>classroom environment</strong>. In particular, I lead the development of <strong>social features</strong>, allowing students to interact with the friends on the platform.</p>														
 						</li>
-						<li class="section position" id="position-uwc">
-							<h2><a href="http://en.wikipedia.org/wiki/Armand_Hammer_United_World_College_of_the_American_West"><span>Learn more about</span><em>United World College-USA</em></a></h2>
-							<p>Together with 200 students from 70 different countries, I studied the <strong>International Baccalaureate</strong> on a <strong>full scholarship</strong> at this international boarding school in <strong>New Mexico</strong>. While there, I transitioned to an electronic voting system for the <strong>student government</strong>, organized the school&apos;s <strong>annual conference</strong>, and pioneered a computational approach to conflict resolution (our forté) with <strong>agent-based modeling</strong>.</p>								
+						<li class="section position nyuad" id="position-nyuadcs">
+							<h2><a href="http://nyuad.nyu.edu/news-events/conferences/nyuad-hackathon-2013.html"><span>See the Hackathon for</span><em>NYUAD Computer Science</em> </a></h2>
+							<p>As a <strong>intern</strong> in the <strong>computer science department</strong> I oversaw NYUAD&apos;s participation in the first NYU <strong>Global Idea Exchange</strong> and am organizing our annual <strong>hackathon</strong> by building systems for managing registrations and other task. I also developed a custom <strong>Facebook application</strong> for assessing and measuring voter <strong>partisanship</strong>.</p>							
+						</li>
+						<li class="section position sila" id="position-sila">
+							<h2><a href="http://www.silaconnection.com/"><span>Visit</span><em>Sila Connection</em></a></h2>
+							<p>As the <strong>webmaster</strong> for the inaugural Sila Connection <strong>conference</strong>, I worked on the <strong>executive committee</strong> to plan this conference focused on <strong>environmental</strong> isssues in <strong>Abu Dhabi</strong>. In addition to provided high-quality design deliverables on <strong>tight deadlines</strong>, I programmed a custom system for integrating and publicizing <strong>Dropbox</strong> uploads during the conference.</p>
 						</li>
 						<li class="clear"></li>
 					</ul>
@@ -107,61 +111,119 @@ $theme->display('header');
 				<span class="clear"></span>
 			</section>
 			
-			<section id="experience">
+			<section id="education">
 				<header>
 					<div class="container">
-						<h2>I have deep <strong>experience</strong></h2>
+						<h2>I have a unique <strong>education</strong></h2>
 					</div>
 				</header>
 				<div class="container">
 					<p class="lede">My education has exposed me to diverse people and fields.</p>
-					<ul class="education positions exampler splitter three">
-						<li class="section position globalclassroom" id="position-globalclassroom">
-							<h2><a href="http://globalclassroom.us/"><span>Visit</span><em>GlobalClassroom</em></a></h2>
-							<p>As a paid <strong>programming intern</strong> at <strong>GlobalClassroom</strong>, a Vermont e-learning <strong>startup</strong>, in <strong class="start">2008</strong>, I designed and developed interfaces for their online <strong>classroom environment</strong>. In particular, I lead the development of <strong>social features</strong>, allowing students to interact with the friends on the platform.</p>														
+					<ul class="education positions exampler splitter two">
+						<li class="section position nyuad" id="position-nyuad">
+							<h2><a href="http://newlyancient.com/2012/04/25/nyuad"><span>Learn why I chose</span><em>New York University Abu Dhabi</em></a></h2>
+							<p>As a student at NYUAD, NYU's new <strong>honors college</strong> in the Middle East</em>, I study a <strong>liberal arts</strong> curriculum, concentrating in computer science, economics, and political science. As the chair of the student government's <strong>research &amp; development committee</strong>, I develop technical solutions for students, including an <strong>OAuth</strong>-based student directory written in <strong>Node.js</strong> and deployed on <strong>Heroku</strong>.</p>								
 						</li>
-						<li class="section position nyuad" id="position-nyuadcs">
-							<h2><a href="http://nyuad.nyu.edu/news-events/conferences/nyuad-hackathon-2013.html"><span>See the Hackathon for</span><em>NYUAD Computer Science</em> </a></h2>
-							<p>As a <strong>intern</strong> in the <strong>computer science department</strong> I oversaw NYUAD&apos;s participation in the first NYU <strong>Global Idea Exchange</strong> and am organizing our annual <strong>hackathon</strong> by building systems for managing registrations and other task. I also developed a custom <strong>Facebook application</strong> for assessing and measuring voter <strong>partisanship</strong>.</p>							
-						</li>
-						<li class="section position sila" id="position-sila">
-							<h2><a href="http://www.silaconnection.com/"><span>Visit</span><em>Sila Connection</em></a></h2>
-							<p>As the <strong>webmaster</strong> for the inaugural Sila Connection <strong>conference</strong>, I worked on the <strong>executive committee</strong> to plan this conference focused on <strong>environmental</strong> isssues in <strong>Abu Dhabi</strong>. In addition to provided high-quality design deliverables on <strong>tight deadlines</strong>, I programmed a custom system for integrating and publicizing <strong>Dropbox</strong> uploads during the conference.</p>
+						<li class="section position" id="position-uwc">
+							<h2><a href="http://en.wikipedia.org/wiki/Armand_Hammer_United_World_College_of_the_American_West"><span>Learn more about</span><em>United World College-USA</em></a></h2>
+							<p>Together with 200 students from 70 different countries, I studied the <strong>International Baccalaureate</strong> on a <strong>full scholarship</strong> at this international boarding school in <strong>New Mexico</strong>. While there, I transitioned to an electronic voting system for the <strong>student government</strong>, organized the school&apos;s <strong>annual conference</strong>, and pioneered a computational approach to conflict resolution (our forté) with <strong>agent-based modeling</strong>.</p>								
 						</li>
 						<li class="clear"></li>
 					</ul>
 				</div>
 				<span class="clear"></span>
 			</section>
-		
-		<section id="fun">
-			<header>
-				<div class="container">
-					<h2>I have a <strong>fun</strong> life outside coding</h2>
-				</div>
-			</header>
-			<div class="container">
-				<ul class="splitter three">
-					<li class="section travel" id="fun-travel">
-						<h2><strong>Travel</strong></h2>
-						<p>I have friends all over the world and love to learn from different cultures. Here are some of the places I've lived and worked.</p>
-						<div id="travel_map_canvas"></div>
-					</li>
-					<li class="section hiking" id="fun-hiking">
-						<h2><strong>Hiking</strong></h2>
-						<p>I love to travel.</p> 
-					</li>
-					<li class="section debate" id="fun-debate">
-						<h2><strong>Debate</strong></h2>
-						<p>I love to travel.</p> 
-					</li>
-					<li class="clear"></li>
-				</ul>
-			</div>
-			<span class="clear"></span>
-		</section>
 			
-		<span class="clear"></span>
+			<section id="projects">
+				<header>
+					<div class="container">
+						<h2>I&apos;ve worked on many development <strong>projects</strong></h2>
+					</div>
+				</header>
+				<div class="container">
+					<p class="lede">Here are 3 of my latest projects:</p>
+					<div class="canvas">
+						<ul class="projects">
+							<li class="project telling_the_times javascript">
+								<a href="http://lab.morgante.net/coolclock">
+									<img src="https://dl.dropbox.com/u/190441/images/telling_the_times.png">
+									<h2>Telling the Times</h2>
+									<p><strong>Telling the Times</strong> is a chronographical essay, written with JavaScript, as an artistic response to Christian Marclay&apos;s <em>The Clock</em>.</p>
+								</a>
+							</li>
+							<li class="project lewis_creek php design web">
+								<a href="http://lewiscreek.org">
+									<img src="https://dl.dropbox.com/u/190441/images/lewis_creek.png">
+									<h2>Lewis Creek</h2>
+									<p>This website I created for the <strong>Lewis Creek Association</strong> includes custom plugins I wrote to integrate Scribd into the publishing workflow.</p>
+								</a>
+							</li>
+							<li class="project habaribox php habari">
+								<a href="http://lab.morgante.net/habaribox">
+									<img src="https://dl.dropbox.com/u/190441/images/habaribox.png">
+									<h2>HabariBox</h2>
+									<p>This plugin I wrote for <strong>Habari</strong> makes it easy to post media from your DropBox to your blog.</p>
+								</a>
+							</li>
+						</ul>
+					</div>
+					
+				</div>
+				<span class="clear"></span>
+			</section>
+			
+			<section id="elsewhere">
+				<header>
+					<div class="container">
+						<h2>I&apos;m all over the <strong>web</strong></h2>
+					</div>
+				</header>
+				<div class="container">
+					
+					<ul class="apps icons">
+						<li class="twitter"><a href="http://twitter.com/morgantepell"><span>&raquo;</span>Twitter</a></li>
+						<li class="delicious"><a href="http://delicious.com/arthus"><span>&raquo;</span>Delicious</a></li>
+						<li class="linkedin"><a href="http://linkedin.com/in/morgante"><span>&raquo;</span>LinkedIn</a></li>
+						<li class="github"><a href="http://github.com/morgante"><span>&raquo;</span>GitHub</a></li>
+						<li class="blog newlyancient"><a href="http://newlyancient.com"><span>&raquo;</span>My Blog</a></li>
+						<li class="lab lemnos"><a href="http://lab.morgante.net"><span>&raquo;</span>My Lab</a></li>
+					</ul>
+				</div>
+				<span class="clear"></span>
+			</section>
+			
+			<span class="clear"></span>
+		
+			<section id="fun">
+				<header>
+					<div class="container">
+						<h2>I have <strong>passions</strong> besides programming:</h2>
+					</div>
+				</header>
+				<div class="container">
+					<ul class="splitter three">
+						<li class="section fun hiking" id="fun-hiking">
+							<h2><strong>Expeditioning</strong></h2>
+							<img alt="Kayaking in Alaska" src="https://dl.dropbox.com/u/190441/images/kayaking.png" width="289" height="130" />
+						</li>
+						<li class="section fun debate stack" id="fun-debate">
+							<h2><strong>Debating</strong></h2>
+							<img alt="Kayaking in Alaska" src="https://dl.dropbox.com/u/190441/images/debating.png" width="289" height="130" />
+						</li>
+						<li class="section fun travel double" id="fun-travel">
+							<h2><strong>Travelling</strong><p>I have friends from all over the world and love to travel.</p></h2>
+							<div class="canvas" id="travel_map_canvas"></div>
+						</li>
+					
+						<li class="clear"></li>
+					</ul>
+				</div>
+				<span class="clear"></span>
+			</section>
+			
+			<span class="clear"></span>
+		
+		</div>
 		
 	</div>
 
