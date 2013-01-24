@@ -72,7 +72,7 @@ $theme->display('header');
 					<ul class="experience positions exampler splitter three">
 						<li class="section position globalclassroom" id="position-globalclassroom">
 							<h2><a href="http://globalclassroom.us/"><span>Visit</span><em>GlobalClassroom</em></a></h2>
-							<p>As a paid <strong>programming intern</strong> at <strong>GlobalClassroom</strong>, a Vermont e-learning <strong>startup</strong>, in <strong class="start">2008</strong>, I designed and developed interfaces for their online <strong>classroom environment</strong>. In particular, I lead the development of <strong>social features</strong>, allowing students to interact with the friends on the platform.</p>														
+							<p>As a paid <strong>programming intern</strong> at <strong>GlobalClassroom</strong>, a Vermont e-learning <strong>startup</strong>, in <strong class="start">2008</strong>, I designed and developed interfaces for their online <strong>classroom environment</strong>. In particular, I led the development of <strong>social features</strong>, allowing students to interact with the friends on the platform.</p>														
 						</li>
 						<li class="section position nyuad" id="position-nyuadcs">
 							<h2><a href="http://nyuad.nyu.edu/news-events/conferences/nyuad-hackathon-2013.html"><span>See the Hackathon for</span><em>NYUAD Computer Science</em> </a></h2>
@@ -91,7 +91,7 @@ $theme->display('header');
 			<section id="good">
 				<header>
 					<div class="container">
-						<h2>I use my skills for <em>good</em> by <em>volunteering</em></h2>
+						<h2>I use my skills for good by <strong>volunteering</strong></h2>
 					</div>
 				</header>
 				<div class="container">
@@ -121,7 +121,7 @@ $theme->display('header');
 					<p class="lede">My education has exposed me to diverse people and fields.</p>
 					<ul class="education positions exampler splitter two">
 						<li class="section position nyuad" id="position-nyuad">
-							<h2><a href="http://newlyancient.com/2012/04/25/nyuad"><span>Learn why I chose</span><em>New York University Abu Dhabi</em></a></h2>
+							<h2><a href="https://github.com/nyuadsg"><span>See what I&apos;ve built for</span><em>New York University Abu Dhabi</em></a></h2>
 							<p>As a student at NYUAD, NYU's new <strong>honors college</strong> in the Middle East</em>, I study a <strong>liberal arts</strong> curriculum, concentrating in computer science, economics, and political science. As the chair of the student government's <strong>research &amp; development committee</strong>, I develop technical solutions for students, including an <strong>OAuth</strong>-based student directory written in <strong>Node.js</strong> and deployed on <strong>Heroku</strong>.</p>								
 						</li>
 						<li class="section position" id="position-uwc">
@@ -145,10 +145,10 @@ $theme->display('header');
 					<div class="canvas">
 						<ul class="projects">
 							<li class="project telling_the_times javascript">
-								<a href="http://lab.morgante.net/coolclock">
+								<a href="http://lab.morgante.net/clock">
 									<img src="https://dl.dropbox.com/u/190441/images/telling_the_times.png">
 									<h2>Telling the Times</h2>
-									<p><strong>Telling the Times</strong> is a chronographical essay, written with JavaScript, as an artistic response to Christian Marclay&apos;s <em>The Clock</em>.</p>
+									<p><strong>Telling the Times</strong> is a chronographical essay, written with JavaScript as an artistic response to Christian Marclay&apos;s <em>The Clock</em>.</p>
 								</a>
 							</li>
 							<li class="project lewis_creek php design web">
@@ -220,6 +220,8 @@ $theme->display('header');
 				</div>
 				<span class="clear"></span>
 			</section>
+			
+			<p id="conclusion">Thank you for your consideration!</p>
 			
 			<span class="clear"></span>
 		

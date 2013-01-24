@@ -453,8 +453,16 @@ section#fun ul li.stack {
 }
 .section.fun.travel strong {
 	background: #E34C26;
+}
+
+/* ==CONCLUSION */
+p#conclusion {
+	margin-top: 50px;
+	font-size: 360%;
+	text-align: center;
+}
 
 /* ==HACKNY */
 body.hackny #skills .graph .skill.wp { /* wordpress... yuck */
-	display: none;
+/*	display: none;*/
 }
