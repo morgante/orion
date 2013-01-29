@@ -141,7 +141,7 @@ $theme->display('header');
 					</div>
 				</header>
 				<div class="container">
-					<p class="lede">Here are 3 of my latest projects:</p>
+					<p class="lede">Here are 3 of my latest projects, but you can find many more in my <a href="http://lab.morgante.net">lab</a>.</p>
 					<div class="canvas">
 						<ul class="projects">
 							<li class="project telling_the_times javascript">
