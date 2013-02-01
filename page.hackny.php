@@ -76,11 +76,11 @@ $theme->display('header');
 						</li>
 						<li class="section position nyuad" id="position-nyuadcs">
 							<h2><a href="http://nyuad.nyu.edu/news-events/conferences/nyuad-hackathon-2013.html"><span>See the Hackathon for</span><em>NYUAD Computer Science</em> </a></h2>
-							<p>As a <strong>intern</strong> in the <strong>computer science department</strong> I oversaw NYUAD&apos;s participation in the first NYU <strong>Global Idea Exchange</strong> and am organizing our annual <strong>hackathon</strong> by building systems for managing registrations and other task. I also developed a custom <strong>Facebook application</strong> for assessing and measuring voter <strong>partisanship</strong>.</p>							
+							<p>As a <strong>intern</strong> in the <strong>computer science department</strong> I oversaw NYUAD&apos;s participation in the first NYU <strong>Global Idea Exchange</strong> and am organizing our annual <strong>hackathon</strong> by building systems for managing registrations and other tasks. I also developed a custom <strong>Facebook application</strong> for assessing and measuring voter <strong>partisanship</strong>.</p>							
 						</li>
 						<li class="section position sila" id="position-sila">
 							<h2><a href="http://www.silaconnection.com/"><span>Visit</span><em>Sila Connection</em></a></h2>
-							<p>As the <strong>webmaster</strong> for the inaugural Sila Connection <strong>conference</strong>, I worked on the <strong>executive committee</strong> to plan this conference focused on <strong>environmental</strong> isssues in <strong>Abu Dhabi</strong>. In addition to provided high-quality design deliverables on <strong>tight deadlines</strong>, I programmed a custom system for integrating and publicizing <strong>Dropbox</strong> uploads during the conference.</p>
+							<p>As the <strong>webmaster</strong> for the inaugural Sila Connection <strong>conference</strong>, I worked on the <strong>executive committee</strong> to plan this conference focused on <strong>environmental</strong> isssues in <strong>Abu Dhabi</strong>. In addition to providing high-quality design deliverables on <strong>tight deadlines</strong>, I programmed a custom system for integrating and publicizing <strong>Dropbox</strong> uploads during the conference.</p>
 						</li>
 						<li class="clear"></li>
 					</ul>
