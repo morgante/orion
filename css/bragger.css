@@ -253,7 +253,9 @@ ul.apps.icons li.blog a span {
 #skills .graph text {
     fill: #FFF;
 }
-
+#skills .graph .skill.java {
+	fill: #5382A1;
+}
 #skills .graph .skill.html {
 	fill: #E34C26;
 }

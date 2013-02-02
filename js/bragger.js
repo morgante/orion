@@ -246,6 +246,13 @@ var skills = {
 			rotate: 5,
 			link: 'http://lab.morgante.net/habaribox'
 		},
+		'java': {
+			name: 'Java',
+			size: -10,
+			x: -39,
+			y: 66,
+			rotate: 15,
+		},
 		'node': {
 			name: 'node.js',
 			size: -15,
