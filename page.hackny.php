@@ -72,11 +72,11 @@ $theme->display('header');
 					<ul class="experience positions exampler splitter three">
 						<li class="section position globalclassroom" id="position-globalclassroom">
 							<h2><a href="http://globalclassroom.us/"><span>Visit</span><em>GlobalClassroom</em></a></h2>
-							<p>As a paid <strong>programming intern</strong> at <strong>GlobalClassroom</strong>, a Vermont e-learning <strong>startup</strong>, in <strong class="start">2008</strong>, I designed and developed interfaces for their online <strong>classroom environment</strong>. In particular, I led the development of <strong>social features</strong>, allowing students to interact with the friends on the platform.</p>														
+							<p>As a paid <strong>programming intern</strong> at <strong>GlobalClassroom</strong>, a Vermont e-learning <strong>startup</strong>, I designed and developed interfaces for their online <strong>classroom environment</strong>. In particular, I led the development of <strong>social features</strong>, allowing students to interact with the friends on the platform.</p>														
 						</li>
 						<li class="section position nyuad" id="position-nyuadcs">
 							<h2><a href="http://nyuad.nyu.edu/news-events/conferences/nyuad-hackathon-2013.html"><span>See the Hackathon for</span><em>NYUAD Computer Science</em> </a></h2>
-							<p>As a <strong>intern</strong> in the <strong>computer science department</strong> I oversaw NYUAD&apos;s participation in the first NYU <strong>Global Idea Exchange</strong> and am organizing our annual <strong>hackathon</strong> by building systems for managing registrations and other tasks. I also developed a custom <strong>Facebook application</strong> for assessing and measuring voter <strong>partisanship</strong>.</p>							
+							<p>As a <strong>intern</strong> in the <strong>computer science department</strong>, I oversaw NYUAD&apos;s participation in the first NYU <strong>Global Idea Exchange</strong> and developed a custom <strong>Facebook application</strong> for assessing and measuring voter <strong>partisanship</strong>. I am also organizing our annual <strong>hackathon</strong> by building systems for managing registrations and other tasks.</p>							
 						</li>
 						<li class="section position sila" id="position-sila">
 							<h2><a href="http://www.silaconnection.com/"><span>Visit</span><em>Sila Connection</em></a></h2>
@@ -126,7 +126,7 @@ $theme->display('header');
 						</li>
 						<li class="section position" id="position-uwc">
 							<h2><a href="http://en.wikipedia.org/wiki/Armand_Hammer_United_World_College_of_the_American_West"><span>Learn more about</span><em>United World College-USA</em></a></h2>
-							<p>Together with 200 students from 70 different countries, I studied the <strong>International Baccalaureate</strong> on a <strong>full scholarship</strong> at this international boarding school in <strong>New Mexico</strong>. While there, I transitioned to an electronic voting system for the <strong>student government</strong>, organized the school&apos;s <strong>annual conference</strong>, and pioneered a computational approach to conflict resolution (our forté) with <strong>agent-based modeling</strong>.</p>								
+							<p>Together with 200 students from 70 different countries, I studied the <strong>International Baccalaureate</strong> on a <strong>full scholarship</strong> at this international boarding school in <strong>New Mexico</strong>. While there, I transitioned the <strong>student government</strong> to an electronic voting system, organized the school&apos;s <strong>annual conference</strong>, and pioneered a computational approach to conflict resolution (our forté) with <strong>agent-based modeling</strong>.</p>								
 						</li>
 						<li class="clear"></li>
 					</ul>
