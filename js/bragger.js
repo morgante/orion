@@ -221,6 +221,13 @@ var skills = {
 			y: -5,
 			rotate: 20
 		},
+		'python': {
+			name: 'Python',
+			size: 10,
+			x: -59,
+			y: -49,
+			rotate: -3
+		},
 		'css': {
 			name: 'CSS',
 			size: 10,
