@@ -28,21 +28,22 @@
 		<div id="header" class="header">
 			
 			<div class="page_section">
-			
+				
+				<?php if( $banner['greeting'] ): ?>
 				<div class="section greeting">
-					<h1>Hello.</h1>
-					<p>My name is <strong>Morgante Pell</strong>.</p>
+					<?php echo $banner['greeting']; ?>
 				</div>
-			
+				<?php endif; ?>
 			
 				<div class="logo">
 					<a href="<?php echo Site::get_url('habari'); ?>" title="My logo">Morgante Pell</a>
 				</div>
-			
+				
+				<?php if( $banner['definition'] ): ?>
 				<div class="section definition">
-					<h2>Morgante Pell (proper noun)</h2>
-					<p>A <a href="<?php echo Post::get(array('slug' => 'about'))->permalink; ?>#work">developer</a>, <a href="<?php echo Post::get(array('slug' => 'about'))->permalink; ?>#work">entrepreneur</a>, <a href="<?php echo Post::get(array('slug' => 'about'))->permalink; ?>#student">student</a>, and <a href="<?php echo Post::get(array('slug' => 'about'))->permalink; ?>#writer">writer</a>.</p>
+					<?php echo $banner['definition']; ?>
 				</div>
+				<?php endif; ?>
 				
 				<span class="clear"></span>
 				

@@ -136,7 +136,7 @@ body {
 
 .page_section {
 	width: 1000px;
-	margin: 0 auto;
+	margin: 0 auto 0;
 	position: relative;
 }
 
@@ -144,6 +144,11 @@ body {
 #header {
 	background: #6D1D1D url('../images/background_header.png') repeat-x left top;
 	height: 160px;
+	width: 100%;
+	z-index: 10000;
+	position: fixed;
+	left: 0;
+	top: 0;
 }
 
 #header .section {
@@ -323,6 +328,7 @@ body {
 
 /* ==CONTENT */
 #page {
+	margin-top: 180px;
 	margin-bottom: 70px;
 }
 
@@ -330,6 +336,10 @@ body {
 	margin: 10px 10px 10px 0;
 	width: 650px;
 	color: #BEBEA6;
+}
+
+#content.full {
+	width: 1000px;
 }
 
 /* ===BLOCK */

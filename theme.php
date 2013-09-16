@@ -1,7 +1,5 @@
 <?php
 
-namespace Habari;
-
 class Orion extends Theme
 {
 	
@@ -17,12 +15,10 @@ class Orion extends Theme
 	
 	public function action_template_header( $theme )
 	{
-		Stack::add( 'template_header_javascript', Site::get_url('scripts') . '/jquery.js', 'jquery' );
+		// Stack::add( 'template_stylesheet', array(Site::get_url('theme') . '/css/jquery.vectormap.css', 'screen'), 'vectormapstyle' );
+		Stack::add( 'template_stylesheet', array(Site::get_url('theme') . '/css/style.css', 'screen'), 'style', array('vectormapstyle') );
 		
-		Stack::add( 'template_stylesheet', array(Site::get_url('theme') . '/css/style.css', 'screen'), 'style' );
-		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/jscrollpane.js', 'jscrollpane', array('jquery') );
-		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/main.js', 'main', array('jquery', 'jscrollpane') );
-
+		
 		Stack::add( 'template_header_javascript', 'http://d3js.org/d3.v3.min.js', 'd3' );
 		// Stack::add( 'template_header_javascript', 'https://www.google.com/jsapi', 'google' );
 		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/jscrollpane.js', 'jscrollpane', array('jquery') );
@@ -116,6 +112,41 @@ class Orion extends Theme
 	    return $text;
 	}
 	
+	/**
+	 * Modify publish form
+	 */
+	public function action_form_publish($form, $post)
+	{
+
+		$header = $form->publish_controls->append('fieldset', 'header', _t('Theme'));
+
+		$header->append('checkbox', 'is_bragger', 'null:null', _t('Use bragger'), 'tabcontrol_checkbox');
+		$header->is_bragger->value = $post->info->is_bragger;
+		
+		$header->append( 'select', 'columns', 'null:null', _t( 'Column Style' ), array( 'content+sidebar' => 'Content & Sidebar', 'content' => 'Content Only'), 'tabcontrol_select' );
+		$header->columns->value = $post->info->columns;
+
+		$header->append('textarea', 'left_box', 'null:null', _t('Left Box'), 'tabcontrol_textarea');
+		$header->left_box->value = $post->info->left_box;
+		$header->left_box->raw = true;
+
+		$header->append('textarea', 'right_box', 'null:null', _t('Right Box'), 'tabcontrol_textarea');
+		$header->right_box->value = $post->info->right_box;
+		$header->right_box->raw = true;
+
+	}
+
+	/**
+	 * Save our data to the database
+	 */
+	public function action_publish_post( $post, $form )
+	{		
+		$post->info->left_box = $form->left_box->value;
+		$post->info->right_box = $form->right_box->value;
+		$post->info->is_bragger = $form->is_bragger->value;
+		$post->info->columns = $form->columns->value;
+	}
+	
 	public function action_add_template_vars()
 	{
 		
@@ -136,6 +167,15 @@ class Orion extends Theme
 		}
 				
 		$theme->request= $request;
+		
+		if( isset( $theme->posts ) && count( $theme->posts ) == 1 )
+		{
+			$post = $theme->posts;
+		}
+		else
+		{
+			$post = false;
+		}
 				
 		if( $theme->request == 'display_page' ) {
 			$theme->orion_page = $theme->post->slug;
@@ -160,6 +200,28 @@ class Orion extends Theme
 		
 		$theme->navigation = $pages;
 		
+		// default banner
+		$banner = array(
+			'greeting' => '<h1>Hello.</h1><p>My name is <strong>Morgante Pell</strong>.</p>',
+			'definition' => false
+		);
+				
+		if( $post )
+		{
+			if( isset( $post->info->left_box ) && $post->info->left_box != '') $banner['greeting'] = $post->info->left_box;
+			if( isset( $post->info->right_box ) && $post->info->right_box != '') $banner['definition'] = $post->info->right_box;
+		}
+		
+		$theme->banner = $banner;
+		
+		if( $post && $post->info->is_bragger )
+		{
+			Stack::add( 'template_stylesheet', array(Site::get_url('theme') . '/css/bragger.css', 'screen'), 'bragger', array('style') );
+			Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/bragger.js', 'bragger', array( 'jquery', 'd3') );
+		}
+		
+		// Utils::debug( $post->info->right_box, $banner );
+		// exit;
 	}
 
 }

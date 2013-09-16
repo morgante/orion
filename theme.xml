@@ -6,11 +6,18 @@
 	
 	<author url="http://morgante.net">Morgante Pell</author>
 	
-	<version>1.2</version>
+	<version>2.0</version>
 	<url>http://lab.morgante.net/orion/</url>
 	<description><![CDATA[This is a simple theme for a personal site.]]></description>
 	
 	<template_engine>rawphpengine</template_engine>
 
 	<copyright>2012</copyright>
+	
+	<areas>
+		<area name="sidebar" title="Sidebar">
+			<description><![CDATA[The sidebar area]]></description>
+		</area>
+	</areas>
+	
 </pluggable>

@@ -1,5 +1,6 @@
 <div id="sidebar" class="aside">
 	
+	<?php if(false): ?>
 	<div class="navigation">
 		<ul>
 			<?php foreach( $navigation as $nav_item): ?>
@@ -11,5 +12,8 @@
 	</div>
 	
 	<?php echo $theme->twitter(); ?>
+	<?php endif; ?>
+	
+	<?php echo $theme->area('footer'); ?>
 	
 </div>
