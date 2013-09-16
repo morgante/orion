@@ -22,8 +22,45 @@ class Orion extends Theme
 		Stack::add( 'template_stylesheet', array(Site::get_url('theme') . '/css/style.css', 'screen'), 'style' );
 		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/jscrollpane.js', 'jscrollpane', array('jquery') );
 		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/main.js', 'main', array('jquery', 'jscrollpane') );
+
+		Stack::add( 'template_header_javascript', 'http://d3js.org/d3.v3.min.js', 'd3' );
+		// Stack::add( 'template_header_javascript', 'https://www.google.com/jsapi', 'google' );
+		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/jscrollpane.js', 'jscrollpane', array('jquery') );
+		// Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/jquery.vectormap.js', 'vectormap', array('jquery') );
+		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/jquery.subwaymap.js', 'subwaymap', array('jquery') );
+		// Stack::add( 'template_header_javascript', Site::get_url('theme') . '/maps/world.js', 'worldmap', array('vectormap') );
+		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/jquery.smooth-scroll.js', 'smooth-scroll', array('jquery') );
+		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/waypoints.jquery.js', 'waypoints', array('jquery') );
+		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/main.js', 'main', array('jquery', 'jscrollpane', 'subwaymap'));
 		
-	}	
+	}
+	
+	/**
+	 * Our shortcode for the amazing subway experience
+	 */
+	function filter_shortcode_experience($content, $code, $attrs, $context)
+	{
+		$items = Experience::get_all();
+		
+		$locations = array(
+			'Everywhere' => 'Everywhere'
+		);
+		
+		foreach ($items as $item) {
+			if (isset($item['location'])) {
+				$locations[$item['location']] = $item['location'];
+			} else {
+				$item['location'] = 'Everywhere';
+			}
+		}
+		
+		$this->assign('life_items', $items);
+		$this->assign('locations', $locations);
+		
+		return $this->fetch('lifemap');
+				
+		// return HabariDateTime::date_create()->format(isset($attrs['format']) ? $attrs['format'] : 'M j, Y');
+	}
 	
 	/**
 	 * User our controls for the contact form

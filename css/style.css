@@ -654,3 +654,17 @@ body.lifestream #stream .item p {
 	color: #FFF;
 	font-size: 140%;
 }
+
+/* ==LIFEMAP */
+.lifemap {
+  position: relative;
+}
+
+.lifemap .days li {
+  height: 0.1px;
+  background: red;
+}
+
+.lifemap .items {
+  position:absolute;
+}
