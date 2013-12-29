@@ -6,7 +6,6 @@
     var xOffset = 100;
     var yOffset = 100;
     var yearLength = 15;
-    var speed = 200;
 
     var labeling = {
         height: 20,
@@ -21,6 +20,58 @@
         animators.forEach(function(animator) {
             animator();
         });
+    };
+
+    var Car = function(path, opts) {
+        var self = this;
+        opts = _.defaults(opts, {
+            width: 10,
+            height: 10
+        });
+
+        this.path = path;
+
+        this.segments = this.path.segments;
+        this.target = this.path.firstSegment;
+
+        var size = new paper.Size(opts.width, opts.height);
+        this.car = new paper.Path.Rectangle(this.target.point, size);
+        this.car.strokeColor = path.strokeColor;
+
+        this.speed = opts.speed;
+        this.steps = 0;
+
+        this.dX = 0;
+        this.dY = 0;
+
+        this.moveTowards(this.target.next);
+
+        animators.push(function() {
+            self.animate();
+        });
+    };
+
+    Car.prototype.moveTowards = function(target) {
+        this.target = target;
+
+        steps = this.car.position.getDistance(this.target.point)/this.speed;
+
+        this.dX = (this.target.point.x - this.car.position.x)/steps;
+        this.dY = (this.target.point.y - this.car.position.y)/steps;
+    };
+
+    Car.prototype.animate = function() {
+        if (this.car.position.getDistance(this.target.point) < 3) {
+            if (this.target.next) {
+                this.moveTowards(this.target.next);
+            } else {
+                this.dX = 0;
+                this.dY = 0;
+            }
+        }
+        // move it babe
+        this.car.position.x += this.dX;
+        this.car.position.y += this.dY;
     };
 
     var Track = function(opts) {
@@ -75,49 +126,8 @@
         this.path.add(new paper.Point(x, y));
     };
 
-    Track.prototype.makeCar = function(speed) {
-        var path = this.path;
-
-        var segments = path.segments;
-        var target = path.firstSegment;
-
-        var size = new paper.Size(10, 10);
-
-        var car = new paper.Path.Rectangle(target.point, size);
-
-        car.strokeColor = path.strokeColor;
-
-        var steps;
-
-        var dX;
-        var dY;
-
-        var goTowards = function(where) {
-            target = where;
-
-            steps = car.position.getDistance(target.point)/speed;
-
-            dX = (target.point.x - car.position.x)/steps;
-            dY = (target.point.y - car.position.y)/steps;
-
-        };
-
-        goTowards(target.next);
-
-        animators.push(function() {
-            if (car.position.getDistance(target.point) < 3) {
-                if (target.next) {
-                    goTowards(target.next);
-                } else {
-                    dX = 0;
-                    dY = 0;
-                }
-            }
-
-            // move it babe
-            car.position.x += dX;
-            car.position.y += dY;
-        });
+    Track.prototype.makeCar = function(opts) {
+        this.car = new Car(this.path, opts);
     };
 
     var Station = function(opts) {
@@ -303,7 +313,9 @@
             // they all need to end at the same place
             track.addEnd(75);
 
-            track.makeCar(track.path.length / speed);
+            track.makeCar({
+                speed: track.path.length / 200
+            });
         });
 
         _.each(stations, function(station) {
