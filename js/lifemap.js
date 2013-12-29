@@ -47,7 +47,7 @@
     ];
     var xOffset = 100;
     var yOffset = 100;
-    var yearLength = 10;
+    var yearLength = 15;
     var speed = 200;
 
     var onFrame = function(event) {
@@ -176,8 +176,14 @@
             }), function(sum, y) {
                 return sum + y;
             }, 0)/_.size(evt.tracks);
+
             var x = xOffset + (evt.year * yearLength);
             evt.point = new paper.Point(x, y);
+
+            // draw the station
+            evt.station = new paper.Path.Circle(evt.point, 5);
+            evt.station.strokeColor = 'orange';
+            evt.station.fillColor = 'orange';
 
             _.each(evt.tracks, function(track) {
                 track.addEvent(evt);
