@@ -4,7 +4,6 @@
 $(document).ready(function() {
 	// layout.init();
 	contactForm.init();
-	lifemap.init();
 });
 
 // Layout
@@ -42,37 +41,3 @@ var contactForm = {
 		
 	}
 };
-
-/* lifemap */
-var lifemap = {
-    init: function() {
-        this.map = $('.lifemap');
-        
-        this.map.append('<ul class="main days"></ul>');
-        
-        var first = $('.lifemap .item').first();
-        var last = $('.lifemap .item').first();
-        
-        lifemap.create_days($('.main.days', this.map), new Date(first.attr('data-start') * 1000), new Date(last.attr('data-end') * 1000));
-        
-        // var item = $('.lifemap .item').first().append('<ul class="days"></ul>');
-        
-        // console.log(item.attr('data-start'))
-        
-        // lifemap.create_days($('.days', item), new Date(item.attr('data-start') * 1000), new Date(item.attr('data-end') * 1000));
-    },
-    create_days: function(where, start, end) {
-        
-        var today = start;
-        
-        while (today < end) {
-            today = new Date(today.getTime());
-            today.setDate(today.getDate()+1);
-            
-            d = $('<li data-day=' + today.getTime() + '> </li>');
-            where.append(d);
-        }
-        
-        console.log(where, start, today, end);
-    }
-}
