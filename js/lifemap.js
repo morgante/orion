@@ -124,13 +124,13 @@
         opts = _.defaults(opts, {
             tracks: [],
             year: 0,
-            label: 'Some Event',
+            name: 'Some Event',
             duration: 2
         });
 
         this.tracks = opts.tracks;
         this.year = opts.year;
-        this.label = opts.label;
+        this.name = opts.name;
         this.duration = opts.duration;
     };
 
@@ -156,11 +156,28 @@
 
     Station.prototype.draw = function() {
         var point = this.getPoint();
+        var color = {
+            normal: 'orange',
+            hover: 'purple'
+        };
 
         // draw the station
-        this.station = new paper.Path.Circle(point, 5);
-        this.station.strokeColor = 'orange';
-        this.station.fillColor = 'orange';
+        var station = new paper.Path.Circle(point, 5);
+        station.strokeColor = color.normal;
+        station.fillColor = color.normal;
+        this.station = station;
+
+        // when you hover on stations
+        this.station.onMouseEnter = function(event) {
+            station.strokeColor = color.hover;
+            station.fillColor = color.hover;
+            document.body.style.cursor = "pointer";
+        };
+        this.station.onMouseLeave = function(event) {
+            station.strokeColor = color.normal;
+            station.fillColor = color.normal;
+            document.body.style.cursor = "default";
+        };
 
         // label the station
         var lPoint = point.add([labeling.offset.x, labeling.offset.y]);
@@ -170,9 +187,9 @@
             lPoint = point.add([labeling.offset.x, -1 * labeling.offset.y]);
         }
 
-        var label = new paper.PointText({
+        this.label = new paper.PointText({
             point: lPoint,
-            content: this.label,
+            content: this.name,
             fillColor: 'black',
             fontFamily: 'Courier New',
             fontWeight: 'bold',
@@ -189,7 +206,7 @@
         rect.visible = false;
 
         var noConflict = _.every(paths, function(path) {
-            if (!path.equals(rect) && path.getIntersections != undefined) {
+            if (!path.equals(rect) && path.getIntersections !== undefined) {
                 var intersect = path.getIntersections(rect);
                 if (intersect.length > 0) {
                     return false;
@@ -244,7 +261,7 @@
             }),
             new Station({
                 tracks: [tracks.green],
-                year: 10
+                year: 15
             }),
             new Station({
                 tracks: [tracks.green, tracks.red],
