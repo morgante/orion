@@ -14,25 +14,29 @@
         });
     };
 
-    var Track = function(name, yPos) {
-        this.name = name;
+    var Track = function(opts) {
+        opts = _.defaults(opts, {
+            name: 'red',
+            opacity: 0.5,
+            y: yOffset,
+            x: xOffset
+        });
 
-        this.start = new paper.Point(xOffset, yPos);
+        this.name = opts.name;
+
+        this.start = new paper.Point(opts.x, opts.y);
 
         this.path = new paper.Path();
         this.path.strokeColor = this.name; // change this later
         this.path.strokeWidth = 5;
+        this.path.opacity = opts.opacity;
 
         this.path.add(this.start);
         this.stations = [];
         this.last = this.start;
     };
 
-    Track.prototype.addStation = function(station) {
-        this.stations.push(station);
-
-        var point = station.getPoint();
-
+    Track.prototype.addPoint = function(point) {
         if (point.y != this.last.y) {
             this.path.add(new paper.Point(point.x, this.last.y));
         }
@@ -41,7 +45,21 @@
         this.last = point;
     };
 
+    Track.prototype.addStation = function(station) {
+        this.stations.push(station);
+
+        var point = station.getPoint();
+
+        this.addPoint(point);
+    };
+
     Track.prototype.addEnd = function(year) {
+        var station = _.max(this.stations, function(station) {
+            return station.year;
+        });
+
+        this.addPoint(new paper.Point(station.point.x + (station.duration * yearLength), this.start.y));
+
         var x = yearLength * year;
         var y = this.last.y;
 
@@ -120,7 +138,7 @@
     };
 
     Station.prototype.getPoint = function() {
-        if (this.point == undefined) {
+        if (this.point === undefined) {
             this.setPoint();
         }
 
@@ -134,6 +152,8 @@
         this.station = new paper.Path.Circle(point, 5);
         this.station.strokeColor = 'orange';
         this.station.fillColor = 'orange';
+
+
     };
 
     Station.prototype.direct = function() {
@@ -153,9 +173,18 @@
         paper.setup(canvas);
 
         tracks = {
-            'red': new Track('red', yOffset),
-            'green': new Track('green', yOffset*2),
-            'blue': new Track('blue', yOffset*3)
+            'red': new Track({
+                name: 'red',
+                y: yOffset
+            }),
+            'green': new Track({
+                name: 'green',
+                y: yOffset*2
+            }),
+            'blue': new Track({
+                name: 'blue',
+                y: yOffset*3
+            }),
         };
 
         stations = [
@@ -165,7 +194,8 @@
             }),
             new Station({
                 tracks: [tracks.green],
-                year: 5
+                year: 5,
+                duration: 3
             }),
             new Station({
                 tracks: [tracks.green],
@@ -177,11 +207,13 @@
             }),
             new Station({
                 tracks: [tracks.blue],
-                year: 5
+                year: 5,
+                duration: 5
             }),
             new Station({
                 tracks: [tracks.blue, tracks.green],
-                year: 30
+                year: 30,
+                duration: 10
             })
         ];
 
@@ -191,7 +223,6 @@
         });
 
         _.each(stations, function(station) {
-            station.draw();
             station.direct();
         });
 
@@ -200,6 +231,10 @@
             track.addEnd(75);
 
             track.makeCar(track.path.length / speed);
+        });
+
+        _.each(stations, function(station) {
+            station.draw();
         });
 
         paper.view.onFrame = onFrame;
