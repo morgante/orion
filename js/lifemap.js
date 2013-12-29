@@ -8,6 +8,15 @@
     var yearLength = 15;
     var speed = 200;
 
+    var labeling = {
+        height: 20,
+        width: 100,
+        offset: {
+            x: 5,
+            y: 10
+        }
+    };
+
     var onFrame = function(event) {
         animators.forEach(function(animator) {
             animator();
@@ -153,7 +162,43 @@
         this.station.strokeColor = 'orange';
         this.station.fillColor = 'orange';
 
+        // label the station
+        var lPoint = point.add([labeling.offset.x, labeling.offset.y]);
+        if (this.testDraw(lPoint)) {
+            lPoint = lPoint.add([0, labeling.offset.y]);
+        } else {
+            lPoint = point.add([labeling.offset.x, -1 * labeling.offset.y]);
+        }
 
+        var label = new paper.PointText({
+            point: lPoint,
+            content: this.label,
+            fillColor: 'black',
+            fontFamily: 'Courier New',
+            fontWeight: 'bold',
+            fontSize: 15
+        });
+    };
+
+    Station.prototype.testDraw = function(point) {
+        var layer = paper.project.activeLayer;
+        var paths = layer.children;
+
+        var rect = new paper.Path.Rectangle(point, new paper.Size(labeling.width, labeling.height));
+        rect.strokeColor = 'black';
+        rect.visible = false;
+
+        var noConflict = _.every(paths, function(path) {
+            if (!path.equals(rect) && path.getIntersections != undefined) {
+                var intersect = path.getIntersections(rect);
+                if (intersect.length > 0) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        return noConflict;
     };
 
     Station.prototype.direct = function() {
