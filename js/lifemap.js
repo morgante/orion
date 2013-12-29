@@ -5,7 +5,7 @@
     var tracks = {};
     var xOffset = 100;
     var yOffset = 100;
-    var yearLength = 15;
+    var timeLength = 15;
 
     var labeling = {
         height: 20,
@@ -152,16 +152,16 @@
 
     Track.prototype.realign = function() {
         var station = _.max(this.stations, function(station) {
-            return station.year;
+            return station.time;
         });
 
-        this.addPoint(new paper.Point(station.point.x + (station.duration * yearLength), this.start.y));
+        this.addPoint(new paper.Point(station.point.x + (station.duration * timeLength), this.start.y));
     };
 
-    Track.prototype.addEnd = function(year) {
+    Track.prototype.addEnd = function(time) {
         this.realign();
 
-        var x = yearLength * year;
+        var x = timeLength * time;
         var y = this.last.y;
 
         this.path.add(new paper.Point(x, y));
@@ -186,7 +186,7 @@
     var Station = function(opts) {
         opts = _.defaults(opts, {
             tracks: [],
-            year: 0,
+            time: 0,
             name: 'Some Event',
             duration: 2,
             colors: {
@@ -196,7 +196,7 @@
         });
 
         this.tracks = opts.tracks;
-        this.year = opts.year;
+        this.time = opts.time;
         this.name = opts.name;
         this.duration = opts.duration;
         this.colors = opts.colors;
@@ -210,7 +210,7 @@
             return sum + y;
         }, 0)/_.size(this.tracks);
 
-        var x = xOffset + (this.year * yearLength);
+        var x = xOffset + (this.time * timeLength);
         this.point = new paper.Point(x, y);
     };
 
@@ -256,7 +256,7 @@
 
         //     path.add(point);
 
-        //     path.add(point.add([self.duration * yearLength, 0]));
+        //     path.add(point.add([self.duration * timeLength, 0]));
         // });
 
         // draw the station
@@ -349,41 +349,41 @@
         stations = [
             new Station({
                 tracks: [tracks.red],
-                year: 5
+                time: 5
             }),
             new Station({
                 tracks: [tracks.green],
-                year: 5,
+                time: 5,
                 duration: 3
             }),
             new Station({
                 tracks: [tracks.green],
-                year: 15
+                time: 15
             }),
             new Station({
                 tracks: [tracks.green, tracks.red],
-                year: 7
+                time: 7
             }),
             new Station({
                 tracks: [tracks.blue],
-                year: 5,
+                time: 5,
                 duration: 5
             }),
             new Station({
                 tracks: [tracks.blue, tracks.green],
-                year: 30,
+                time: 30,
                 duration: 5
             }),
             new Station({
                 tracks: [tracks.blue, tracks.green, tracks.red],
-                year: 40,
+                time: 40,
                 duration: 10
             })
         ];
 
         // sort our stations
         stations = _.sortBy(stations, function(station) {
-            return station.year;
+            return station.time;
         });
 
         _.each(stations, function(station) {
