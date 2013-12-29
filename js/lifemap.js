@@ -5,7 +5,7 @@
     var tracks = {};
     var xOffset = 100;
     var yOffset = 100;
-    var timeLength = 15;
+    var timeLength = 10;
 
     var labeling = {
         height: 20,
@@ -113,6 +113,7 @@
     var Track = function(opts) {
         opts = _.defaults(opts, {
             name: 'red',
+            color: 'red',
             opacity: 0.5,
             y: yOffset,
             x: xOffset,
@@ -124,7 +125,7 @@
         this.start = new paper.Point(opts.x, opts.y);
 
         this.path = new paper.Path();
-        this.path.strokeColor = this.name; // change this later
+        this.path.strokeColor = opts.color; // change this later
         this.path.strokeWidth = opts.width;
         this.path.opacity = opts.opacity;
 
@@ -151,11 +152,13 @@
     };
 
     Track.prototype.realign = function() {
-        var station = _.max(this.stations, function(station) {
-            return station.time;
-        });
+        if (this.stations.length > 0) {
+            var station = _.max(this.stations, function(station) {
+                return station.time;
+            });
 
-        this.addPoint(new paper.Point(station.point.x + (station.duration * timeLength), this.start.y));
+            this.addPoint(new paper.Point(station.point.x + (station.duration * timeLength), this.start.y));
+        }   
     };
 
     Track.prototype.addEnd = function(time) {
@@ -323,63 +326,65 @@
         });
     };
 
+    var compareTime = function(start, end) {
+        var firstDate = new Date(start.getTime());
+        var secondDate = new Date(end.getTime());
+
+        var fm = firstDate.getMonth();
+        var fy = firstDate.getFullYear();
+        var sm = secondDate.getMonth();
+        var sy = secondDate.getFullYear();
+        var months = Math.abs(((fy - sy) * 12) + fm - sm);
+        var firstBefore = firstDate > secondDate;
+        firstDate.setFullYear(sy);
+        firstDate.setMonth(sm);
+        firstBefore ? firstDate < secondDate ? months-- : "" : secondDate < firstDate ? months-- : "";
+        return months;
+    };
+
     var init = function() {
-        // hide the lifemap
-        $('.lifemap').hide();
+        var $scopes = $('.lifemap .scopes');
+        var $items = $('.lifemap .items');
+
+        $scopes.hide();
+        $items.hide();
 
         canvas = document.getElementById('myLifemap');
 
         paper.setup(canvas);
 
-        tracks = {
-            'red': new Track({
-                name: 'red',
-                y: yOffset
-            }),
-            'green': new Track({
-                name: 'green',
-                y: yOffset*2
-            }),
-            'blue': new Track({
-                name: 'blue',
-                y: yOffset*3
-            }),
-        };
+        var i = 0;
+        $scopes.children().each(function(i, scope) {
+            var $scope = $(scope);
+            var name = $scope.data('scope-name');
+            var color = $scope.data('scope-color');
 
-        stations = [
-            new Station({
-                tracks: [tracks.red],
-                time: 5
-            }),
-            new Station({
-                tracks: [tracks.green],
-                time: 5,
-                duration: 3
-            }),
-            new Station({
-                tracks: [tracks.green],
-                time: 15
-            }),
-            new Station({
-                tracks: [tracks.green, tracks.red],
-                time: 7
-            }),
-            new Station({
-                tracks: [tracks.blue],
-                time: 5,
-                duration: 5
-            }),
-            new Station({
-                tracks: [tracks.blue, tracks.green],
-                time: 30,
-                duration: 5
-            }),
-            new Station({
-                tracks: [tracks.blue, tracks.green, tracks.red],
-                time: 40,
-                duration: 10
-            })
-        ];
+            tracks[name] = new Track({
+                name: name,
+                color: color,
+                y: yOffset + (i*yOffset)
+            });
+
+            i++;
+        });
+
+        var start = new Date('January 14, 2007');
+        var stations = [];
+
+        $items.children().each(function(i, item) {
+            var $item = $(item);
+            var sTracks = [];
+            var time = new Date($item.data('start')*1000);
+
+            _.each($item.data('life-scopes').split(' '), function(track) {
+                sTracks.push(tracks[track]);
+            });
+
+            stations.push(new Station({
+                tracks: sTracks,
+                time: compareTime(start, time)
+            }));
+        });
 
         // sort our stations
         stations = _.sortBy(stations, function(station) {
@@ -392,7 +397,7 @@
 
         _.each(tracks, function(track) {
             // they all need to end at the same place
-            track.addEnd(75);
+            track.addEnd(compareTime(start, new Date('June 2016')));
 
             track.makeCar({
                 speed: track.path.length / 200
