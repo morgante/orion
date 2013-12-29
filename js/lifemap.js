@@ -32,6 +32,7 @@
         this.path = path;
 
         this.segments = this.path.segments;
+        this.last = this.path.firstSegment;
         this.target = this.path.firstSegment;
 
         var size = new paper.Size(opts.width, opts.height);
@@ -39,16 +40,48 @@
         this.car.strokeColor = path.strokeColor;
 
         this.speed = opts.speed;
-        this.steps = 0;
 
         this.dX = 0;
         this.dY = 0;
 
-        this.moveTowards(this.target.next);
+        this.goTo(_.last(this.segments));
 
         animators.push(function() {
             self.animate();
         });
+    };
+
+    Car.prototype.goTo = function(dest) {
+        if ((this.destination && this.destination.equals(dest))) {
+            return;
+        }
+
+        var route = [];
+        var self = this;
+        this.destination = dest;
+
+        if (this.destination.index > this.last.index) {
+            // we are going forwards
+            _.each(this.segments, function(segment) {
+                if (dest.index >= segment.index && segment.index > self.last.index) {
+                    route.push(segment);
+                }
+            });
+        } else {
+            // going backwards, yay
+            var segs = _.clone(this.segments);
+            segs.reverse();
+            _.each(segs, function(segment) {
+                if (dest.index <= segment.index && segment.index < self.last.index) {
+                    route.push(segment);
+                }
+            });
+        }
+
+        this.route = route;
+        this.i = 0;
+
+        this.moveTowards(route[0]);
     };
 
     Car.prototype.moveTowards = function(target) {
@@ -62,13 +95,16 @@
 
     Car.prototype.animate = function() {
         if (this.car.position.getDistance(this.target.point) < 3) {
-            if (this.target.next) {
-                this.moveTowards(this.target.next);
+            this.last = this.target;
+            if (this.route[this.i + 1]) {
+                this.i++;
+                this.moveTowards(this.route[this.i]);
             } else {
                 this.dX = 0;
                 this.dY = 0;
             }
         }
+
         // move it babe
         this.car.position.x += this.dX;
         this.car.position.y += this.dY;
@@ -130,6 +166,18 @@
         this.car = new Car(this.path, opts);
     };
 
+    Track.prototype.getSegment = function(point) {
+        var rSeg;
+
+        _.each(this.path.segments, function(segment) {
+            if (segment.point.equals(point)) {
+                rSeg = segment;
+            }
+        });
+
+        return rSeg;
+    };
+
     var Station = function(opts) {
         opts = _.defaults(opts, {
             tracks: [],
@@ -181,6 +229,15 @@
         document.body.style.cursor = "default";
     };
 
+    Station.prototype.click = function(event) {
+        var self = this;
+
+        _.each(this.tracks, function(track) {
+            var segment = track.getSegment(self.getPoint());
+            track.car.goTo(segment);
+        });
+    };
+
     Station.prototype.draw = function() {
         var self = this;
         var point = this.getPoint();
@@ -197,7 +254,9 @@
         };
         this.station.onMouseLeave = function(event) {
             self.exit(event);
-
+        };
+        this.station.onClick = function(event) {
+            self.click(event);
         };
 
         // label the station
