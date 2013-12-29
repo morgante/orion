@@ -3,48 +3,6 @@
     var canvas;
     var animators = [];
     var tracks = {};
-    var events = [
-        {
-            tracks: ['red'],
-            year: 5
-        },
-        {
-            tracks: ['red'],
-            year: 6
-        },
-        {
-            tracks: ['blue'],
-            year: 9
-        },
-        {
-            tracks: ['blue'],
-            year: 10
-        },
-        {
-            tracks: ['green'],
-            year: 15
-        },
-        {
-            tracks: ['red', 'blue'],
-            year: 35
-        },
-        {
-            tracks: ['blue', 'green'],
-            year: 36
-        },
-        {
-            tracks: ['red', 'green'],
-            year: 40
-        },
-        {
-            tracks: ['green'],
-            year: 55
-        },
-        {
-            tracks: ['red'],
-            year: 45
-        }
-    ];
     var xOffset = 100;
     var yOffset = 100;
     var yearLength = 15;
@@ -56,29 +14,24 @@
         });
     };
 
-    var Track = function(name) {
+    var Track = function(name, yPos) {
         this.name = name;
 
-        if (_.size(tracks) > 0) {
-            var last = _.max(tracks, function(trck) {
-                return trck.start.y;
-            });
-
-            this.start = last.start.add([0, yOffset]);
-        } else {
-            this.start = new paper.Point(xOffset, yOffset);
-        }
+        this.start = new paper.Point(xOffset, yPos);
 
         this.path = new paper.Path();
         this.path.strokeColor = this.name; // change this later
         this.path.strokeWidth = 5;
 
         this.path.add(this.start);
+        this.stations = [];
         this.last = this.start;
     };
 
-    Track.prototype.addEvent = function(event) {
-        var point = event.point;
+    Track.prototype.addStation = function(station) {
+        this.stations.push(station);
+
+        var point = station.getPoint();
 
         if (point.y != this.last.y) {
             this.path.add(new paper.Point(point.x, this.last.y));
@@ -140,6 +93,57 @@
         });
     };
 
+    var Station = function(opts) {
+        opts = _.defaults(opts, {
+            tracks: [],
+            year: 0,
+            label: 'Some Event',
+            duration: 2
+        });
+
+        this.tracks = opts.tracks;
+        this.year = opts.year;
+        this.label = opts.label;
+        this.duration = opts.duration;
+    };
+
+    Station.prototype.setPoint = function() {
+        // determine the point for this event
+        var y = _.reduce(_.map(this.tracks, function(track) {
+            return track.last.y;
+        }), function(sum, y) {
+            return sum + y;
+        }, 0)/_.size(this.tracks);
+
+        var x = xOffset + (this.year * yearLength);
+        this.point = new paper.Point(x, y);
+    };
+
+    Station.prototype.getPoint = function() {
+        if (this.point == undefined) {
+            this.setPoint();
+        }
+
+        return this.point;
+    };
+
+    Station.prototype.draw = function() {
+        var point = this.getPoint();
+
+        // draw the station
+        this.station = new paper.Path.Circle(point, 5);
+        this.station.strokeColor = 'orange';
+        this.station.fillColor = 'orange';
+    };
+
+    Station.prototype.direct = function() {
+        var station = this;
+
+        _.each(this.tracks, function(track) {
+            track.addStation(station);
+        });
+    };
+
     var init = function() {
         // hide the lifemap
         $('.lifemap').hide();
@@ -148,48 +152,47 @@
 
         paper.setup(canvas);
 
-        events.forEach(function(evt) {
+        tracks = {
+            'red': new Track('red', yOffset),
+            'green': new Track('green', yOffset*2),
+            'blue': new Track('blue', yOffset*3)
+        };
 
-            // ensure properness
-            if (evt.duration === undefined) {
-                evt.duration = 2;
-            }
+        stations = [
+            new Station({
+                tracks: [tracks.red],
+                year: 5
+            }),
+            new Station({
+                tracks: [tracks.green],
+                year: 5
+            }),
+            new Station({
+                tracks: [tracks.green],
+                year: 10
+            }),
+            new Station({
+                tracks: [tracks.green, tracks.red],
+                year: 7
+            }),
+            new Station({
+                tracks: [tracks.blue],
+                year: 5
+            }),
+            new Station({
+                tracks: [tracks.blue, tracks.green],
+                year: 30
+            })
+        ];
 
-            // build proper event tracks
-            var eventTracks = {};
+        // sort our stations
+        stations = _.sortBy(stations, function(station) {
+            return station.year;
+        });
 
-            evt.tracks.forEach(function(trackName) {
-                var track = tracks[trackName];
-
-                if (track === undefined) {
-                    track = tracks[trackName] = new Track(trackName);
-                }
-
-                eventTracks[trackName] = track;
-            });
-
-            evt.tracks = eventTracks;
-
-            // determine the point for this event
-            var y = _.reduce(_.map(evt.tracks, function(track) {
-                return track.start.y;
-            }), function(sum, y) {
-                return sum + y;
-            }, 0)/_.size(evt.tracks);
-
-            var x = xOffset + (evt.year * yearLength);
-            evt.point = new paper.Point(x, y);
-
-            // draw the station
-            evt.station = new paper.Path.Circle(evt.point, 5);
-            evt.station.strokeColor = 'orange';
-            evt.station.fillColor = 'orange';
-
-            _.each(evt.tracks, function(track) {
-                track.addEvent(evt);
-            });
-
-            evt.tracks = eventTracks;
+        _.each(stations, function(station) {
+            station.draw();
+            station.direct();
         });
 
         _.each(tracks, function(track) {
