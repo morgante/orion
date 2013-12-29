@@ -2,6 +2,45 @@
 (function($) {
     var canvas;
     var animators = [];
+    var tracks = {};
+    var events = [
+        {
+            tracks: ['red'],
+            year: 5
+        },
+        {
+            tracks: ['red'],
+            year: 6
+        },
+        {
+            tracks: ['blue'],
+            year: 9
+        },
+        {
+            tracks: ['blue'],
+            year: 10
+        },
+        {
+            tracks: ['green'],
+            year: 15
+        },
+        {
+            tracks: ['red', 'blue'],
+            year: 35
+        },
+        {
+            tracks: ['blue', 'green'],
+            year: 36
+        },
+        {
+            tracks: ['red', 'green'],
+            year: 40
+        }
+    ];
+    var xOffset = 100;
+    var yOffset = 100;
+    var yearLength = 10;
+
 
     var makeCar = function(path) {
         var segments = path.segments;
@@ -14,7 +53,7 @@
         car.strokeColor = 'black';
 
         var speed = 2;
-        var steps = speed;
+        var steps;
 
         var dX;
         var dY;
@@ -53,6 +92,38 @@
         });
     };
 
+    var Track = function(name) {
+        this.name = name;
+
+        if (_.size(tracks) > 0) {
+            var last = _.max(tracks, function(trck) {
+                return trck.start.y;
+            });
+
+            this.start = last.start.add([0, yOffset]);
+        } else {
+            this.start = new paper.Point(xOffset, yOffset);
+        }
+
+        this.path = new paper.Path();
+        this.path.strokeColor = this.name; // change this later
+        this.path.strokeWidth = 5;
+
+        this.path.add(this.start);
+        this.last = this.start;
+    };
+
+    Track.prototype.addEvent = function(event) {
+        var point = event.point;
+
+        if (point.y != this.last.y) {
+            this.path.add(new paper.Point(point.x, this.last.y));
+        }
+
+        this.path.add(point);
+        this.last = point;
+    };
+
     var init = function() {
         // hide the lifemap
         $('.lifemap').hide();
@@ -61,34 +132,40 @@
 
         paper.setup(canvas);
 
-        // Move to start and draw a line from there
-        var start = new paper.Point(100, 100);
-        var path = new paper.Path();
-        path.strokeColor = 'black';
+        events.forEach(function(evt) {
 
-        path.add(start);
-        path.add(start.add([ 200, 0 ]));
-        path.add(start.add([ 200, -50 ]));
-        path.add(start.add([ 300, -50 ]));
-        path.add(start.add([ 300, 0 ]));
+            // build proper event tracks
+            var eventTracks = {};
 
-        makeCar(path);
+            evt.tracks.forEach(function(trackName) {
+                var track = tracks[trackName];
 
-        var start = new paper.Point(100, 300);
-        var path = new paper.Path();
-        path.strokeColor = 'black';
+                if (track === undefined) {
+                    track = tracks[trackName] = new Track(trackName);
+                }
 
-        path.add(start);
-        path.add(start.add([ 100, 0 ]));
-        path.add(start.add([ 100, 50 ]));
-        path.add(start.add([ 200, 50 ]));
-        path.add(start.add([ 200, 0 ]));
-        path.add(start.add([ 300, 0 ]));
-        path.add(start.add([ 300, 50 ]));
+                eventTracks[trackName] = track;
+            });
 
-        // path.add(start.add([ 100, 50 ]));
+            evt.tracks = eventTracks;
 
-        makeCar(path);
+            // determine the point for this event
+            var y = _.reduce(_.map(evt.tracks, function(track) {
+                return track.last.y;
+            }), function(sum, y) {
+                return sum + y;
+            }, 0)/_.size(evt.tracks);
+            var x = xOffset + (evt.year * yearLength);
+            evt.point = new paper.Point(x, y);
+
+            console.log();
+
+            _.each(evt.tracks, function(track) {
+                track.addEvent(evt);
+            });
+
+            evt.tracks = eventTracks;
+        });
 
         paper.view.onFrame = onFrame;
 
