@@ -94,7 +94,7 @@
     };
 
     Car.prototype.animate = function() {
-        if (this.car.position.getDistance(this.target.point) < 3) {
+        if (this.car.position.getDistance(this.target.point) < 5) {
             this.last = this.target;
             if (this.route[this.i + 1]) {
                 this.i++;
@@ -149,12 +149,16 @@
         this.addPoint(point);
     };
 
-    Track.prototype.addEnd = function(year) {
+    Track.prototype.realign = function() {
         var station = _.max(this.stations, function(station) {
             return station.year;
         });
 
         this.addPoint(new paper.Point(station.point.x + (station.duration * yearLength), this.start.y));
+    };
+
+    Track.prototype.addEnd = function(year) {
+        this.realign();
 
         var x = yearLength * year;
         var y = this.last.y;
@@ -355,6 +359,11 @@
             new Station({
                 tracks: [tracks.blue, tracks.green],
                 year: 30,
+                duration: 5
+            }),
+            new Station({
+                tracks: [tracks.blue, tracks.green, tracks.red],
+                year: 40,
                 duration: 10
             })
         ];
