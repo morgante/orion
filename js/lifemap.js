@@ -115,7 +115,8 @@
             name: 'red',
             opacity: 0.5,
             y: yOffset,
-            x: xOffset
+            x: xOffset,
+            width: 5
         });
 
         this.name = opts.name;
@@ -124,7 +125,7 @@
 
         this.path = new paper.Path();
         this.path.strokeColor = this.name; // change this later
-        this.path.strokeWidth = 5;
+        this.path.strokeWidth = opts.width;
         this.path.opacity = opts.opacity;
 
         this.path.add(this.start);
@@ -245,6 +246,18 @@
     Station.prototype.draw = function() {
         var self = this;
         var point = this.getPoint();
+
+        // draw the trail
+        // _.each(this.tracks, function(track) {
+        //     path = new paper.Path();
+        //     path.strokeColor = track.path.strokeColor;
+        //     path.strokeWidth = 5;
+        //     path.opacity = 0.8;
+
+        //     path.add(point);
+
+        //     path.add(point.add([self.duration * yearLength, 0]));
+        // });
 
         // draw the station
         var station = new paper.Path.Circle(point, 5);
