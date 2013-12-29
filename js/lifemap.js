@@ -125,13 +125,18 @@
             tracks: [],
             year: 0,
             name: 'Some Event',
-            duration: 2
+            duration: 2,
+            colors: {
+                normal: 'orange',
+                hover: 'purple'
+            }
         });
 
         this.tracks = opts.tracks;
         this.year = opts.year;
         this.name = opts.name;
         this.duration = opts.duration;
+        this.colors = opts.colors;
     };
 
     Station.prototype.setPoint = function() {
@@ -154,29 +159,35 @@
         return this.point;
     };
 
+    Station.prototype.enter = function(event) {
+        this.station.strokeColor = this.colors.hover;
+        this.station.fillColor = this.colors.hover;
+        document.body.style.cursor = "pointer";
+    };
+
+    Station.prototype.exit = function(event) {
+        this.station.strokeColor = this.colors.normal;
+        this.station.fillColor = this.colors.normal;
+        document.body.style.cursor = "default";
+    };
+
     Station.prototype.draw = function() {
+        var self = this;
         var point = this.getPoint();
-        var color = {
-            normal: 'orange',
-            hover: 'purple'
-        };
 
         // draw the station
         var station = new paper.Path.Circle(point, 5);
-        station.strokeColor = color.normal;
-        station.fillColor = color.normal;
+        station.strokeColor = this.colors.normal;
+        station.fillColor = this.colors.normal;
         this.station = station;
 
         // when you hover on stations
         this.station.onMouseEnter = function(event) {
-            station.strokeColor = color.hover;
-            station.fillColor = color.hover;
-            document.body.style.cursor = "pointer";
+            self.enter(event);
         };
         this.station.onMouseLeave = function(event) {
-            station.strokeColor = color.normal;
-            station.fillColor = color.normal;
-            document.body.style.cursor = "default";
+            self.exit(event);
+
         };
 
         // label the station
