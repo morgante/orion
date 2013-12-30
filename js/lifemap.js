@@ -8,7 +8,7 @@
     var timeLength = 10;
 
     var labeling = {
-        height: 20,
+        height: 10,
         width: 100,
         offset: {
             x: 5,
@@ -285,9 +285,22 @@
         // label the station
         var lPoint = point.add([labeling.offset.x, labeling.offset.y]);
         if (this.testDraw(lPoint)) {
+            // okay, bottom right works
             lPoint = lPoint.add([0, labeling.offset.y]);
         } else {
-            lPoint = point.add([labeling.offset.x, -1 * labeling.offset.y]);
+            lPoint = point.add([labeling.offset.x, -1 * (labeling.offset.y)]);
+            if (this.testDraw(lPoint)) {
+                // okay, top right works
+            } else {
+                lPoint = point.add([-1 * (labeling.width + (2 * labeling.offset.x)), -1 * (labeling.offset.y + labeling.height)]);
+                if (this.testDraw(lPoint)) {
+                    // okay, top left works
+                    lPoint = point.add([-1 * (labeling.width + (labeling.offset.x)), -1 * (labeling.offset.y)]);
+                } else {
+                    console.log(this);
+                    lPoint = point.add([-1 * (labeling.width + labeling.offset.x), -1 * labeling.offset.y]);
+                }
+            }
         }
 
         this.label = new paper.PointText({
@@ -306,7 +319,7 @@
 
         var rect = new paper.Path.Rectangle(point, new paper.Size(labeling.width, labeling.height));
         rect.strokeColor = 'black';
-        rect.visible = false;
+        // rect.visible = false;
 
         var noConflict = _.every(paths, function(path) {
             if (!path.equals(rect) && path.getIntersections !== undefined) {
