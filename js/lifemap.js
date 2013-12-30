@@ -72,6 +72,11 @@
         this.route = route;
         this.i = 0;
 
+        // _.each(this.route, function(seg) {
+        //     var circle = new paper.Path.Circle(seg.point, 8);
+        //     circle.strokeColor = 'red';
+        // });
+
         this.moveTowards(route[0]);
     };
 
@@ -85,7 +90,7 @@
     };
 
     Car.prototype.animate = function() {
-        if (this.car.position.getDistance(this.target.point) < 5) {
+        if (this.car.position.getDistance(this.target.point) < 6) {
             this.last = this.target;
             if (this.route[this.i + 1]) {
                 this.i++;
