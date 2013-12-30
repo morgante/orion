@@ -2,6 +2,7 @@
 (function($) {
     var canvas;
     var animators = [];
+
     var tracks = {};
     var xOffset = 100;
     var yOffset = 100;
@@ -9,7 +10,7 @@
 
     var onFrame = function(event) {
         animators.forEach(function(animator) {
-            animator();
+            animator(event);
         });
     };
 
@@ -43,9 +44,11 @@
     };
 
     Car.prototype.goTo = function(dest, teleport) {
-        if ((this.destination && this.destination.equals(dest))) {
+        if (this.destination && this.atDestination(dest) && this.atDestination(this.car.position)) {
             return;
         }
+
+        console.log(dest);
 
         var location = this.path.getLocationOf(dest);
         this.destination = dest;
@@ -80,6 +83,11 @@
 
         // reset dOffset
         this.dOffset = this.speed;
+    };
+
+    Car.prototype.start = function() {
+        console.log('hesdss', this.destination);
+        this.goTo(this.destination);
     };
 
     Car.prototype.atDestination = function(point) {
@@ -195,7 +203,7 @@
 
         var intersect = this.path.getIntersections(line);
 
-        if (intersect.length  == 1) {
+        if (intersect.length  == 1 && intersect[0] != undefined) {
             return intersect[0].point;
         } else {
             // do we need to handle this better?
@@ -515,6 +523,66 @@
         this.car = this.track.makeCar(opts);
     };
 
+    function Snake(opts) {
+        var self = this;
+        opts = opts || {};
+
+        _.defaults(opts, {
+            xOffset: 100,
+            yOffset: 125,
+            color: 'black',
+            opacity: 0.5,
+            width: 10,
+            name: 'You',
+            step: 10
+        });
+
+        this.xOffset = opts.xOffset;
+        this.yOffset = opts.yOffset;
+        this.step = opts.step;
+
+        this.track = new Track({
+            name: opts.name,
+            color: opts.color,
+            y: this.yOffset
+        });
+
+        this.position = new paper.Point(this.xOffset, this.yOffset);
+
+        this.track.addPoint(this.position);
+        this.path = this.track.path;
+
+        $(document.body).keypress(function(event) {
+            console.log(event);
+
+            if(event.which === 97) { // a
+                self.position = self.position.add([-1 * self.step, 0]);
+            }
+
+            if(event.which === 100) { // d
+                self.position = self.position.add([self.step, 0]);
+            }
+
+            if(event.which === 119) { // w
+                self.position = self.position.add([0, -1 * self.step]);
+            }
+
+            if(event.which === 115) { // s
+                self.position = self.position.add([0, self.step]);
+            }
+
+            self.track.car.goTo(self.position);
+
+            self.path.add(self.position);
+        });
+    }
+
+    var play = function() {
+        _.each(tracks, function(track) {
+            track.car.start();
+        });
+    };
+
     var init = function() {
         var $scopes = $('.lifemap .scopes');
         var $items = $('.lifemap .items');
@@ -595,6 +663,20 @@
 
         _.each(stations.reverse(), function(station) {
             station.draw();
+        });
+
+        // var snake = new Snake();
+        // tracks.snake = snake.track;
+
+        // snake.track.makeCar({
+        //     speed: 50,
+        //     size: 30
+        // });
+
+        $(document).keypress(function(event) {
+            if(event.which === 32) {
+                play();
+            }
         });
 
         paper.view.onFrame = onFrame;
