@@ -17,25 +17,23 @@
         var self = this;
         opts = _.defaults(opts, {
             width: 10,
-            height: 10
+            height: 10,
+            speed: 100
         });
 
         this.path = path;
 
-        this.segments = this.path.segments;
-        this.last = this.path.firstSegment;
-        this.target = this.path.firstSegment;
+        this.speed = this.path.length / (10000 / opts.speed);
+        this.offset = 0;
+        this.dOffset = this.speed;
+        this.direction = 1; // going forwards or backwards?
 
         var size = new paper.Size(opts.width, opts.height);
-        this.car = new paper.Path.Rectangle(this.target.point, size);
+        this.car = new paper.Path.Rectangle(this.path.firstSegment.point, size);
         this.car.strokeColor = path.strokeColor;
+        this.car.fillColor = path.strokeColor;
 
-        this.speed = opts.speed;
-
-        this.dX = 0;
-        this.dY = 0;
-
-        this.goTo(_.last(this.segments));
+        this.goTo(this.path.lastSegment.point);
 
         animators.push(function() {
             self.animate();
@@ -47,63 +45,42 @@
             return;
         }
 
-        var route = [];
-        var self = this;
+        var location = this.path.getLocationOf(dest);
         this.destination = dest;
 
-        if (this.destination.index > this.last.index) {
-            // we are going forwards
-            _.each(this.segments, function(segment) {
-                if (dest.index >= segment.index && segment.index > self.last.index) {
-                    route.push(segment);
-                }
-            });
+        if (location.offset > this.offset) {
+            // move forwards
+            this.direction = 1;
+        } else if (location.offset < this.offset) {
+            // move backwards
+            this.direction = -1;
         } else {
-            // going backwards, yay
-            var segs = _.clone(this.segments);
-            segs.reverse();
-            _.each(segs, function(segment) {
-                if (dest.index <= segment.index && segment.index < self.last.index) {
-                    route.push(segment);
-                }
-            });
+            // move nowhere
+            this.direction = 0;
         }
-
-        this.route = route;
-        this.i = 0;
-
-        // _.each(this.route, function(seg) {
-        //     var circle = new paper.Path.Circle(seg.point, 8);
-        //     circle.strokeColor = 'red';
-        // });
-
-        this.moveTowards(route[0]);
     };
 
-    Car.prototype.moveTowards = function(target) {
-        this.target = target;
-
-        steps = this.car.position.getDistance(this.target.point)/this.speed;
-
-        this.dX = (this.target.point.x - this.car.position.x)/steps;
-        this.dY = (this.target.point.y - this.car.position.y)/steps;
+    Car.prototype.stop = function() {
+        this.direction = 0;
     };
 
     Car.prototype.animate = function() {
-        if (this.car.position.getDistance(this.target.point) < 6) {
-            this.last = this.target;
-            if (this.route[this.i + 1]) {
-                this.i++;
-                this.moveTowards(this.route[this.i]);
+        if (this.direction !== 0) {
+            if (this.car.position.getDistance(this.destination) < this.dOffset) {
+                this.car.position = this.destination;
+                this.stop();
+            }
+
+            this.offset = this.offset + (this.direction * this.dOffset);
+            var pt = this.path.getPointAt(this.offset);
+
+            if (pt !== null) {
+                // move it babe
+                this.car.position = pt;
             } else {
-                this.dX = 0;
-                this.dY = 0;
+                this.stop();
             }
         }
-
-        // move it babe
-        this.car.position.x += this.dX;
-        this.car.position.y += this.dY;
     };
 
     var Track = function(opts) {
@@ -168,18 +145,6 @@
 
     Track.prototype.makeCar = function(opts) {
         this.car = new Car(this.path, opts);
-    };
-
-    Track.prototype.getSegment = function(point) {
-        var rSeg;
-
-        _.each(this.path.segments, function(segment) {
-            if (segment.point.equals(point)) {
-                rSeg = segment;
-            }
-        });
-
-        return rSeg;
     };
 
     var Station = function(opts) {
@@ -259,8 +224,7 @@
         var self = this;
 
         _.each(this.tracks, function(track) {
-            var segment = track.getSegment(self.getPoint());
-            track.car.goTo(segment);
+            track.car.goTo(self.getPoint());
         });
     };
 
@@ -476,7 +440,7 @@
             track.addEnd(compareTime(start, new Date()));
 
             track.makeCar({
-                speed: track.path.length / 200
+                speed: 50
             });
         });
 
