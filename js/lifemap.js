@@ -195,13 +195,11 @@
 
         var intersect = this.path.getIntersections(line);
 
-        // TODO: round towards stations
-
         if (intersect.length  == 1) {
             return intersect[0].point;
         } else {
-            // do we need to handle this?
-            console.log(intersect);
+            // do we need to handle this better?
+            return intersect[0].point;
         }
     };
 
@@ -215,7 +213,10 @@
 
             self.car.teleport(point);
 
-            _.each(tracks, function(track) {
+            var oTracks = _.values(tracks);
+            oTracks = _.without(oTracks, self);
+
+            _.each(oTracks, function(track) {
                 track.setTime(point.x);
             });
         };
@@ -300,6 +301,9 @@
         _.each(this.tracks, function(track) {
             track.car.goTo(self.getPoint());
         });
+
+        // also move the timeline
+        tracks.timeline.goTime(self.getPoint().x);
 
         // we could move others if we wanted to...
 
@@ -427,7 +431,6 @@
 
         _.each(oTracks, function(track) {
             if (track.last.y === station.getPoint().y) {
-                console.log(station, station.getPoint().y, track.last.y);
                 track.realign();
             }
         });
@@ -460,29 +463,16 @@
         });
 
         this.track.addPoint(this.getPoint(this.end));
+        this.path = this.track.path;
 
-        // this.path = new paper.Path();
-        // this.path.strokeColor = opts.color;
-        // this.path.strokeWidth = opts.width;
-        // this.path.opacity = opts.opacity;
+        this.path.onClick = function(event) {
+            var point = self.path.getNearestPoint(event.point);
 
-        // this.path.add(this.getPoint(start));
-        // this.path.add(this.getPoint(end));
-
-        // this.path.onClick = function(event) {
-        //     self.click(event);
-        // };
+            _.each(tracks, function(track) {
+                track.goTime(point.x);
+            });
+        };
     }
-
-    Timeline.prototype.click = function(event) {
-        var point = this.path.getNearestPoint(event.point);
-
-        _.each(tracks, function(track) {
-            track.goTime(point.x);
-        });
-
-        this.car.goTo(point);
-    };
 
     Timeline.prototype.convertTime = function(time) {
         var firstDate = new Date(this.start.getTime());
