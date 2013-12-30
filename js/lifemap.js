@@ -166,7 +166,7 @@
 
         var x = xOffset + (timeLength * time);
         var y = this.last.y;
-        
+
         this.addPoint(new paper.Point(x, y));
     };
 
@@ -213,7 +213,10 @@
             return sum + y;
         }, 0)/_.size(this.tracks);
 
-        var x = xOffset + (this.time * timeLength);
+        var t = this.time;
+
+        var x = xOffset + (t * timeLength);
+
         this.point = new paper.Point(x, y);
     };
 
@@ -251,16 +254,16 @@
         var point = this.getPoint();
 
         // draw the trail
-        // _.each(this.tracks, function(track) {
-        //     path = new paper.Path();
-        //     path.strokeColor = track.path.strokeColor;
-        //     path.strokeWidth = 5;
-        //     path.opacity = 0.8;
+        _.each(this.tracks, function(track) {
+            path = new paper.Path();
+            path.strokeColor = track.path.strokeColor;
+            path.strokeWidth = 5;
+            path.opacity = 0.8;
 
-        //     path.add(point);
+            path.add(point);
 
-        //     path.add(point.add([self.duration * timeLength, 0]));
-        // });
+            path.add(point.add([self.duration * timeLength, 0]));
+        });
 
         // draw the station
         var station = new paper.Path.Circle(point, 5);
@@ -323,6 +326,16 @@
 
         _.each(this.tracks, function(track) {
             track.addStation(station);
+            oTracks = _.omit(oTracks, track);
+        });
+
+        var oTracks = _.values(tracks);
+        oTracks = _.difference(oTracks, this.tracks);
+
+        _.each(oTracks, function(track) {
+            if (track.last.y == station.getPoint().y) {
+                track.realign();
+            }
         });
     };
 
@@ -338,7 +351,15 @@
         var firstBefore = firstDate > secondDate;
         firstDate.setFullYear(sy);
         firstDate.setMonth(sm);
-        firstBefore ? firstDate < secondDate ? months-- : "" : secondDate < firstDate ? months-- : "";
+        firstBefore ? firstDate < secondDate ? months-- : 0 : secondDate < firstDate ? months-- : 0;
+
+        // transform months
+        if (months < 60) {
+            months = months / 2;
+        } else {
+            months = (months - 60)*3 + 30;
+        }
+
         return months;
     };
 
@@ -375,6 +396,7 @@
             var $item = $(item);
             var sTracks = [];
             var time = new Date($item.data('start')*1000);
+            var name = $('h3', item).text();
 
             _.each($item.data('life-scopes').split(' '), function(track) {
                 sTracks.push(tracks[track]);
@@ -382,6 +404,7 @@
 
             stations.push(new Station({
                 tracks: sTracks,
+                name: name,
                 time: compareTime(start, time)
             }));
         });
@@ -404,7 +427,7 @@
             });
         });
 
-        _.each(stations, function(station) {
+        _.each(stations.reverse(), function(station) {
             station.draw();
         });
 
