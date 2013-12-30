@@ -207,7 +207,7 @@
 
     Track.prototype.makeCar = function(opts) {
         var self = this;
-        
+
         this.car = new Car(this.path, opts);
 
         this.car.car.onMouseDrag = function(event) {
@@ -453,18 +453,25 @@
         this.timeSize = opts.timeSize;
         this.timeLength = this.convertTime(end);
 
+        this.track = new Track({
+            name: name,
+            color: opts.color,
+            y: this.yOffset
+        });
 
-        this.path = new paper.Path();
-        this.path.strokeColor = opts.color;
-        this.path.strokeWidth = opts.width;
-        this.path.opacity = opts.opacity;
+        this.track.addPoint(this.getPoint(this.end));
 
-        this.path.add(this.getPoint(start));
-        this.path.add(this.getPoint(end));
+        // this.path = new paper.Path();
+        // this.path.strokeColor = opts.color;
+        // this.path.strokeWidth = opts.width;
+        // this.path.opacity = opts.opacity;
 
-        this.path.onClick = function(event) {
-            self.click(event);
-        };
+        // this.path.add(this.getPoint(start));
+        // this.path.add(this.getPoint(end));
+
+        // this.path.onClick = function(event) {
+        //     self.click(event);
+        // };
     }
 
     Timeline.prototype.click = function(event) {
@@ -515,19 +522,7 @@
 
     Timeline.prototype.makeCar = function(opts) {
         var self = this;
-        this.car = new Car(this.path, opts);
-
-        var handler = self.dragCar;
-
-        this.car.car.onMouseDrag = function(event) {
-            var point = self.path.getNearestPoint(event.point);
-
-            self.car.teleport(point);
-
-            _.each(tracks, function(track) {
-                track.setTime(point.x);
-            });
-        };
+        this.car = this.track.makeCar(opts);
     };
 
     var init = function() {
@@ -601,10 +596,12 @@
             });
         });
 
+        // make the car seperately
         timeline.makeCar({
             speed: 50,
             size: 20
         });
+        tracks.timeline = timeline.track;
 
         _.each(stations.reverse(), function(station) {
             station.draw();
