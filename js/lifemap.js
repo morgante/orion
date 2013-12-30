@@ -269,16 +269,16 @@
         var point = this.getPoint();
 
         // draw the trail
-        _.each(this.tracks, function(track) {
-            path = new paper.Path();
-            path.strokeColor = track.path.strokeColor;
-            path.strokeWidth = 5;
-            path.opacity = 0.8;
+        // _.each(this.tracks, function(track) {
+        //     path = new paper.Path();
+        //     path.strokeColor = track.path.strokeColor;
+        //     path.strokeWidth = 5;
+        //     path.opacity = 0.8;
 
-            path.add(point);
+        //     path.add(point);
 
-            path.add(point.add([self.duration * timeLength, 0]));
-        });
+        //     path.add(point.add([self.duration * timeLength, 0]));
+        // });
 
         // draw the station
         var station = new paper.Path.Circle(point, 5);
