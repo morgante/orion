@@ -140,7 +140,35 @@
         var x = xOffset + (timeLength * time);
         var y = this.last.y;
 
+        this.timeSpan = time;
+
         this.addPoint(new paper.Point(x, y));
+    };
+
+    Track.prototype.setTime = function(x) {
+        var point = this.getPoint(x);
+
+        if (point) {
+            this.car.goTo(point);
+        }
+    };
+
+    Track.prototype.getPoint = function(x) {
+        var line = new paper.Path();
+        line.add(new paper.Point(x, 0));
+        line.add(new paper.Point(x, 1000));
+        line.visible = false;
+
+        var intersect = this.path.getIntersections(line);
+
+        // TODO: round towards stations
+
+        if (intersect.length  == 1) {
+            return intersect[0].point;
+        } else {
+            // do we need to handle this?
+            console.log(intersect);
+        }
     };
 
     Track.prototype.makeCar = function(opts) {
@@ -226,6 +254,15 @@
         _.each(this.tracks, function(track) {
             track.car.goTo(self.getPoint());
         });
+
+        // we could move others if we wanted to...
+
+        // var oTracks = _.values(tracks);
+        // oTracks = _.difference(oTracks, this.tracks);
+
+        // _.each(oTracks, function(track) {
+        //     track.setTime(self.getPoint().x);
+        // });
     };
 
     Station.prototype.draw = function() {
@@ -342,19 +379,59 @@
         var oTracks = _.values(tracks);
         oTracks = _.difference(oTracks, this.tracks);
 
-
         _.each(oTracks, function(track) {
             if (track.last.y === station.getPoint().y) {
-                            console.log(station, station.getPoint().y, track.last.y);
-
+                console.log(station, station.getPoint().y, track.last.y);
                 track.realign();
             }
         });
     };
 
-    var compareTime = function(start, end) {
-        var firstDate = new Date(start.getTime());
-        var secondDate = new Date(end.getTime());
+    function Timeline(opts, start, end) {
+        var self = this;
+
+        _.defaults(opts, {
+            xOffset: 100,
+            yOffset: 50,
+            color: 'black',
+            opacity: 0.5,
+            timeSize: 10,
+            width: 10
+        });
+
+        this.start = start;
+        this.end = end;
+
+        this.xOffset = opts.xOffset;
+        this.yOffset = opts.yOffset;
+        this.timeSize = opts.timeSize;
+        this.timeLength = this.convertTime(end);
+
+
+        this.path = new paper.Path();
+        this.path.strokeColor = opts.color;
+        this.path.strokeWidth = opts.width;
+        this.path.opacity = opts.opacity;
+
+        this.path.add(this.getPoint(start));
+        this.path.add(this.getPoint(end));
+
+        this.path.onClick = function(event) {
+            self.click(event);
+        };
+    }
+
+    Timeline.prototype.click = function(event) {
+        var point = this.path.getNearestPoint(event.point);
+
+        _.each(tracks, function(track) {
+            track.setTime(point.x);
+        });
+    };
+
+    Timeline.prototype.convertTime = function(time) {
+        var firstDate = new Date(this.start.getTime());
+        var secondDate = new Date(time.getTime());
 
         var fm = firstDate.getMonth();
         var fy = firstDate.getFullYear();
@@ -378,6 +455,14 @@
         }
 
         return months;
+    };
+
+    Timeline.prototype.getPoint = function(date) {
+        var time = this.convertTime(date);
+
+        var point = new paper.Point(xOffset + (time * this.timeSize), this.yOffset);
+
+        return point;
     };
 
     var init = function() {
@@ -407,7 +492,14 @@
         });
 
         var start = new Date('January 14, 2007');
+        var end = new Date();
+
         var stations = [];
+
+        var timeline = new Timeline({
+            xOffset: xOffset,
+            yOffset: 50
+        }, start, end);
 
         $items.children().each(function(i, item) {
             var $item = $(item);
@@ -422,7 +514,7 @@
             stations.push(new Station({
                 tracks: sTracks,
                 name: name,
-                time: compareTime(start, time)
+                time: timeline.convertTime(time)
             }));
         });
 
@@ -437,7 +529,7 @@
 
         _.each(tracks, function(track) {
             // they all need to end at the same place
-            track.addEnd(compareTime(start, new Date()));
+            track.addEnd(timeline.convertTime(end));
 
             track.makeCar({
                 speed: 50
