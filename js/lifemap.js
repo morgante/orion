@@ -158,16 +158,16 @@
             });
 
             this.addPoint(new paper.Point(station.point.x + (station.duration * timeLength), this.start.y));
-        }   
+        }
     };
 
     Track.prototype.addEnd = function(time) {
         this.realign();
 
-        var x = timeLength * time;
+        var x = xOffset + (timeLength * time);
         var y = this.last.y;
-
-        this.path.add(new paper.Point(x, y));
+        
+        this.addPoint(new paper.Point(x, y));
     };
 
     Track.prototype.makeCar = function(opts) {
@@ -397,7 +397,7 @@
 
         _.each(tracks, function(track) {
             // they all need to end at the same place
-            track.addEnd(compareTime(start, new Date('June 2016')));
+            track.addEnd(compareTime(start, new Date()));
 
             track.makeCar({
                 speed: track.path.length / 200
