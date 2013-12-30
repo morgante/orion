@@ -34,12 +34,14 @@
 
         this.goTo(this.path.lastSegment.point);
 
+        this.stop();
+
         animators.push(function() {
             self.animate();
         });
     };
 
-    Car.prototype.goTo = function(dest) {
+    Car.prototype.goTo = function(dest, teleport) {
         if ((this.destination && this.destination.equals(dest))) {
             return;
         }
@@ -57,34 +59,52 @@
             // move nowhere
             this.direction = 0;
         }
+
+        if (teleport) {
+            this.stop();
+
+            this.car.position = this.destination;
+            this.offset = location.offset;
+
+            var pt = this.path.getPointAt(this.offset);
+        }
     };
 
     Car.prototype.teleport = function(point) {
-        this.destination = point;
-        this.car.position = point;
-        this.stop();
+        this.goTo(point, true);
     };
 
     Car.prototype.stop = function() {
         this.direction = 0;
+
+        // reset dOffset
+        this.dOffset = this.speed;
+    };
+
+    Car.prototype.atDestination = function(point) {
+        return (point.getDistance(this.destination) < this.dOffset);
     };
 
     Car.prototype.animate = function() {
         if (this.direction !== 0) {
-            if (this.car.position.getDistance(this.destination) < this.dOffset) {
+            if (this.atDestination(this.car.position)) {
                 this.car.position = this.destination;
                 this.stop();
             }
 
-            this.offset = this.offset + (this.direction * this.dOffset);
-            var pt = this.path.getPointAt(this.offset);
+            this.move(this.dOffset);
+        }
+    };
 
-            if (pt !== null) {
-                // move it babe
-                this.car.position = pt;
-            } else {
-                this.stop();
-            }
+    Car.prototype.move = function(speed) {
+        this.offset = this.offset + (this.direction * speed);
+        var pt = this.path.getPointAt(this.offset);
+
+        if (pt !== null) {
+            // move it babe
+            this.car.position = pt;
+        } else {
+            this.stop();
         }
     };
 
@@ -434,16 +454,6 @@
         };
     }
 
-    Timeline.prototype.drag = function(event) {
-        var point = this.path.getNearestPoint(event.point);
-
-        this.car.teleport(point);
-
-        _.each(tracks, function(track) {
-            track.setTime(point.x);
-        });
-    };
-
     Timeline.prototype.click = function(event) {
         var point = this.path.getNearestPoint(event.point);
 
@@ -494,8 +504,16 @@
         var self = this;
         this.car = new Car(this.path, opts);
 
+        var handler = self.dragCar;
+
         this.car.car.onMouseDrag = function(event) {
-            self.drag(event);
+            var point = self.path.getNearestPoint(event.point);
+
+            self.car.teleport(point);
+
+            _.each(tracks, function(track) {
+                track.setTime(point.x);
+            });
         };
     };
 
