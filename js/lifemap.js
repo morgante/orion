@@ -28,9 +28,10 @@
         this.direction = 1; // going forwards or backwards?
 
         var size = new paper.Size(opts.size, opts.size);
-        this.car = new paper.Path.Rectangle(this.path.firstSegment.point, size);
+        this.car = new paper.Path.Rectangle(new paper.Point(0,0), size);
         this.car.strokeColor = path.strokeColor;
         this.car.fillColor = path.strokeColor;
+        this.car.position = this.path.getPointAt(0);
 
         this.goTo(this.path.lastSegment.point);
 
@@ -205,7 +206,19 @@
     };
 
     Track.prototype.makeCar = function(opts) {
+        var self = this;
+        
         this.car = new Car(this.path, opts);
+
+        this.car.car.onMouseDrag = function(event) {
+            var point = self.path.getNearestPoint(event.point);
+
+            self.car.teleport(point);
+
+            _.each(tracks, function(track) {
+                track.setTime(point.x);
+            });
+        };
     };
 
     var Station = function(opts) {
