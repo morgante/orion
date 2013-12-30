@@ -212,11 +212,16 @@
 
     Station.prototype.setPoint = function() {
         // determine the point for this event
-        var y = _.reduce(_.map(this.tracks, function(track) {
-            return track.last.y;
-        }), function(sum, y) {
-            return sum + y;
-        }, 0)/_.size(this.tracks);
+        var y;
+        if (this.tracks.length > 1) {
+            y = _.reduce(_.map(this.tracks, function(track) {
+                return track.start.y;
+            }), function(sum, y) {
+                return sum + y;
+            }, 0)/_.size(this.tracks);
+        } else {
+            y = _.first(this.tracks).start.y;
+        }
 
         var t = this.time;
 
@@ -303,13 +308,21 @@
                     // okay, top left works
                     lPoint = lPoint.add([0, this.labeling.height]);
                 } else {
-                    lPoint = point.add([-1 * (this.labeling.width + (this.labeling.xOffset)), (this.labeling.yOffset * 2)]);
+                    lPoint = point.add([-1 * (this.labeling.width + (this.labeling.xOffset)), (this.labeling.yOffset)]);
+                    if (this.testDraw(lPoint)) {
+                        // okay, bottom left works
+                        lPoint = lPoint.add([0, this.labeling.yOffset]);
+                    } else {
+                        // back to basics (bottom right)
+                        lPoint = point.add([this.labeling.xOffset, this.labeling.yOffset * 2]);
+                    }
                 }
             }
         }
 
-        var rect = new paper.Path.Rectangle(lPoint, new paper.Size(this.labeling.width, this.labeling.height));
+        var rect = new paper.Path.Rectangle(lPoint.add([0, -1 * this.labeling.height]), new paper.Size(this.labeling.width, this.labeling.height));
         rect.strokeColor = 'black';
+        rect.visible = false;
 
         this.label = this.drawLabel(lPoint);
     };
@@ -360,8 +373,11 @@
         var oTracks = _.values(tracks);
         oTracks = _.difference(oTracks, this.tracks);
 
+
         _.each(oTracks, function(track) {
-            if (track.last.y == station.getPoint().y) {
+            if (track.last.y === station.getPoint().y) {
+                            console.log(station, station.getPoint().y, track.last.y);
+
                 track.realign();
             }
         });
@@ -383,7 +399,11 @@
 
         // transform months
         if (months < 60) {
-            months = months / 2;
+            if (months < 10) {
+                months = months;
+            } else {
+                months = months / 2 + 5;
+            }
         } else {
             months = (months - 60)*3 + 30;
         }
