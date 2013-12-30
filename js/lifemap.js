@@ -7,15 +7,6 @@
     var yOffset = 100;
     var timeLength = 10;
 
-    var labeling = {
-        height: 10,
-        width: 100,
-        offset: {
-            x: 5,
-            y: 10
-        }
-    };
-
     var onFrame = function(event) {
         animators.forEach(function(animator) {
             animator();
@@ -195,7 +186,8 @@
             colors: {
                 normal: 'orange',
                 hover: 'purple'
-            }
+            },
+            label: {},
         });
 
         this.tracks = opts.tracks;
@@ -203,6 +195,19 @@
         this.name = opts.name;
         this.duration = opts.duration;
         this.colors = opts.colors;
+
+        this.labeling = _.defaults(opts.label, {
+            xOffset: 5,
+            yOffset: 10,
+            fontSize: 15,
+            width: 100,
+            height: 10
+        });
+
+        var lTest = this.drawLabel(new paper.Point(0, 0));
+        this.labeling.width = lTest.bounds.width;
+        this.labeling.height = lTest.bounds.height;
+        lTest.remove();
     };
 
     Station.prototype.setPoint = function() {
@@ -283,33 +288,40 @@
         };
 
         // label the station
-        var lPoint = point.add([labeling.offset.x, labeling.offset.y]);
+        var lPoint = point.add([this.labeling.xOffset, this.labeling.yOffset]);
         if (this.testDraw(lPoint)) {
             // okay, bottom right works
-            lPoint = lPoint.add([0, labeling.offset.y]);
+            lPoint = lPoint.add([0, this.labeling.yOffset]);
         } else {
-            lPoint = point.add([labeling.offset.x, -1 * (labeling.offset.y)]);
+            lPoint = point.add([this.labeling.xOffset, -1 * (this.labeling.yOffset + this.labeling.height)]);
             if (this.testDraw(lPoint)) {
                 // okay, top right works
+                lPoint = lPoint.add([0, this.labeling.height]);
             } else {
-                lPoint = point.add([-1 * (labeling.width + (2 * labeling.offset.x)), -1 * (labeling.offset.y + labeling.height)]);
+                lPoint = point.add([-1 * (this.labeling.width + (1 * this.labeling.xOffset)), -1 * (this.labeling.yOffset + this.labeling.height)]);
                 if (this.testDraw(lPoint)) {
                     // okay, top left works
-                    lPoint = point.add([-1 * (labeling.width + (labeling.offset.x)), -1 * (labeling.offset.y)]);
+                    lPoint = lPoint.add([0, this.labeling.height]);
                 } else {
-                    console.log(this);
-                    lPoint = point.add([-1 * (labeling.width + labeling.offset.x), -1 * labeling.offset.y]);
+                    lPoint = point.add([-1 * (this.labeling.width + (this.labeling.xOffset)), (this.labeling.yOffset * 2)]);
                 }
             }
         }
 
-        this.label = new paper.PointText({
-            point: lPoint,
+        var rect = new paper.Path.Rectangle(lPoint, new paper.Size(this.labeling.width, this.labeling.height));
+        rect.strokeColor = 'black';
+
+        this.label = this.drawLabel(lPoint);
+    };
+
+    Station.prototype.drawLabel = function(point) {
+        return new paper.PointText({
+            point: point,
             content: this.name,
             fillColor: 'black',
             fontFamily: 'Courier New',
             fontWeight: 'bold',
-            fontSize: 15
+            fontSize: this.labeling.fontSize
         });
     };
 
@@ -317,7 +329,7 @@
         var layer = paper.project.activeLayer;
         var paths = layer.children;
 
-        var rect = new paper.Path.Rectangle(point, new paper.Size(labeling.width, labeling.height));
+        var rect = new paper.Path.Rectangle(point, new paper.Size(this.labeling.width, this.labeling.height));
         rect.strokeColor = 'black';
         // rect.visible = false;
 
@@ -330,6 +342,9 @@
             }
             return true;
         });
+
+        // delete the rectangle
+        rect.remove();
 
         return noConflict;
     };
