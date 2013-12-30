@@ -16,8 +16,7 @@
     var Car = function(path, opts) {
         var self = this;
         opts = _.defaults(opts, {
-            width: 10,
-            height: 10,
+            size: 10,
             speed: 100
         });
 
@@ -28,7 +27,7 @@
         this.dOffset = this.speed;
         this.direction = 1; // going forwards or backwards?
 
-        var size = new paper.Size(opts.width, opts.height);
+        var size = new paper.Size(opts.size, opts.size);
         this.car = new paper.Path.Rectangle(this.path.firstSegment.point, size);
         this.car.strokeColor = path.strokeColor;
         this.car.fillColor = path.strokeColor;
@@ -58,6 +57,12 @@
             // move nowhere
             this.direction = 0;
         }
+    };
+
+    Car.prototype.teleport = function(point) {
+        this.destination = point;
+        this.car.position = point;
+        this.stop();
     };
 
     Car.prototype.stop = function() {
@@ -146,6 +151,14 @@
     };
 
     Track.prototype.setTime = function(x) {
+        var point = this.getPoint(x);
+
+        if (point) {
+            this.car.teleport(point);
+        }
+    };
+
+    Track.prototype.goTime = function(x) {
         var point = this.getPoint(x);
 
         if (point) {
@@ -421,12 +434,24 @@
         };
     }
 
-    Timeline.prototype.click = function(event) {
+    Timeline.prototype.drag = function(event) {
         var point = this.path.getNearestPoint(event.point);
+
+        this.car.teleport(point);
 
         _.each(tracks, function(track) {
             track.setTime(point.x);
         });
+    };
+
+    Timeline.prototype.click = function(event) {
+        var point = this.path.getNearestPoint(event.point);
+
+        _.each(tracks, function(track) {
+            track.goTime(point.x);
+        });
+
+        this.car.goTo(point);
     };
 
     Timeline.prototype.convertTime = function(time) {
@@ -463,6 +488,15 @@
         var point = new paper.Point(xOffset + (time * this.timeSize), this.yOffset);
 
         return point;
+    };
+
+    Timeline.prototype.makeCar = function(opts) {
+        var self = this;
+        this.car = new Car(this.path, opts);
+
+        this.car.car.onMouseDrag = function(event) {
+            self.drag(event);
+        };
     };
 
     var init = function() {
@@ -534,6 +568,11 @@
             track.makeCar({
                 speed: 50
             });
+        });
+
+        timeline.makeCar({
+            speed: 50,
+            size: 20
         });
 
         _.each(stations.reverse(), function(station) {
