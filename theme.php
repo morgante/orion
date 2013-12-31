@@ -17,11 +17,13 @@ class Orion extends Theme
 	{
 		// Stack::add( 'template_stylesheet', array(Site::get_url('theme') . '/css/jquery.vectormap.css', 'screen'), 'vectormapstyle' );
 		// Stack::add( 'template_stylesheet', array(Site::get_url('theme') . '/css/style.css', 'screen'), 'style', array('vectormapstyle') );
-		
+		Stack::add( 'template_stylesheet', array(Site::get_url('theme') . '/css/bootstrap.min.css', 'screen'), 'bootstrap', array() );
+		Stack::add( 'template_stylesheet', array(Site::get_url('theme') . '/css/lifemap.css', 'screen'), 'lifemap', array('bootstrap') );
 		
 		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/d3.js', 'd3' );
 		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/underscore.js', 'underscore' );
 		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/paper.js', 'paper' );
+		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/bootstrap.min.js', 'bootstrap', array('jquery') );
 
 		// Stack::add( 'template_header_javascript', 'https://www.google.com/jsapi', 'google' );
 		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/jscrollpane.js', 'jscrollpane', array('jquery') );
@@ -31,7 +33,7 @@ class Orion extends Theme
 		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/jquery.smooth-scroll.js', 'smooth-scroll', array('jquery') );
 		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/waypoints.jquery.js', 'waypoints', array('jquery') );
 		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/main.js', 'main', array('jquery', 'jscrollpane', 'subwaymap'));
-		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/lifemap.js', 'main', array('jquery', 'paper', 'underscore'));
+		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/lifemap.js', 'lifemap', array('jquery', 'paper', 'underscore', 'bootstrap'));
 		
 	}
 	

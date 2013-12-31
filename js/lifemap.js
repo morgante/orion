@@ -2,8 +2,11 @@
 (function($) {
     var canvas;
     var animators = [];
+    var $container;
 
     var tracks = {};
+    var stations = [];
+
     var xOffset = 100;
     var yOffset = 100;
     var timeLength = 10;
@@ -48,10 +51,29 @@
             return;
         }
 
-        console.log(dest);
+        // console.log(dest);
 
         var location = this.path.getLocationOf(dest);
         this.destination = dest;
+
+        this.go(dest);
+
+        _.each(stations, function(station) {
+            station.unhighlight();
+        });
+
+        if (teleport) {
+            this.stop();
+
+            this.car.position = this.destination;
+            this.offset = location.offset;
+
+            var pt = this.path.getPointAt(this.offset);
+        }
+    };
+
+    Car.prototype.go = function(point) {
+        var location = this.path.getLocationOf(point);
 
         if (location.offset > this.offset) {
             // move forwards
@@ -62,15 +84,6 @@
         } else {
             // move nowhere
             this.direction = 0;
-        }
-
-        if (teleport) {
-            this.stop();
-
-            this.car.position = this.destination;
-            this.offset = location.offset;
-
-            var pt = this.path.getPointAt(this.offset);
         }
     };
 
@@ -86,8 +99,7 @@
     };
 
     Car.prototype.start = function() {
-        console.log('hesdss', this.destination);
-        this.goTo(this.destination);
+        this.go(this.destination);
     };
 
     Car.prototype.atDestination = function(point) {
@@ -203,7 +215,7 @@
 
         var intersect = this.path.getIntersections(line);
 
-        if (intersect.length  == 1 && intersect[0] != undefined) {
+        if (intersect.length  == 1 && intersect[0] !== undefined) {
             return intersect[0].point;
         } else {
             // do we need to handle this better?
@@ -313,6 +325,8 @@
         // also move the timeline
         tracks.timeline.goTime(self.getPoint().x);
 
+        this.highlight();
+
         // we could move others if we wanted to...
 
         // var oTracks = _.values(tracks);
@@ -321,6 +335,27 @@
         // _.each(oTracks, function(track) {
         //     track.setTime(self.getPoint().x);
         // });
+    };
+
+    Station.prototype.highlight = function() {
+        if (this.$pointref === undefined) {
+            return;
+        }
+
+        this.$pointref.popover('show');
+
+        // unhighlight other stations
+        _.each(_.without(stations, this), function(station) {
+            station.unhighlight();
+        });
+    };
+
+    Station.prototype.unhighlight = function() {
+        if (this.$pointref === undefined) {
+            return;
+        }
+
+        this.$pointref.popover('hide');
     };
 
     Station.prototype.draw = function() {
@@ -344,6 +379,18 @@
         station.strokeColor = this.colors.normal;
         station.fillColor = this.colors.normal;
         this.station = station;
+
+        this.$pointref = $('<div class="pointref">L</div>');
+        this.$pointref.css('left', point.x);
+        this.$pointref.css('top', point.y);
+        $container.append(this.$pointref);
+
+        this.$pointref.popover({
+            title: "Hell",
+            content: 'BOB',
+            placement: 'bottom'
+        });
+        // this.$pointref.popover('show');
 
         // when you hover on stations
         this.station.onMouseEnter = function(event) {
@@ -577,10 +624,29 @@
         });
     }
 
+    var playing = false;
+
     var play = function() {
         _.each(tracks, function(track) {
             track.car.start();
         });
+        playing = true;
+    };
+
+    var pause = function() {
+        playing = false;
+
+        _.each(tracks, function(track) {
+            track.car.stop();
+        });
+    };
+
+    var toggle = function() {
+        if (playing) {
+            pause();
+        } else {
+            play();
+        }
     };
 
     var init = function() {
@@ -590,6 +656,7 @@
         $scopes.hide();
         $items.hide();
 
+        $container = $('.lifemap');
         canvas = document.getElementById('myLifemap');
 
         paper.setup(canvas);
@@ -611,8 +678,6 @@
 
         var start = new Date('January 14, 2007');
         var end = new Date();
-
-        var stations = [];
 
         var timeline = new Timeline({
             xOffset: xOffset,
@@ -672,10 +737,11 @@
         //     speed: 50,
         //     size: 30
         // });
-
+        // 
+ 
         $(document).keypress(function(event) {
             if(event.which === 32) {
-                play();
+                toggle();
             }
         });
 
