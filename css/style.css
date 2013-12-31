@@ -32,6 +32,7 @@ html {
 /* 10px base */
 body {
 	font-size: 10px;
+	background: transparent;
 }
 
 a {
