@@ -1,5 +1,5 @@
 /* lifemap */
-(function($) {
+(function($, skillspin) {
     var canvas;
     var animators = [];
     var $container;
@@ -50,8 +50,6 @@
         if (this.destination && this.atDestination(dest) && this.atDestination(this.car.position)) {
             return;
         }
-
-        // console.log(dest);
 
         var location = this.path.getLocationOf(dest);
         this.destination = dest;
@@ -110,6 +108,11 @@
         if (this.direction !== 0) {
             if (this.atDestination(this.car.position)) {
                 this.car.position = this.destination;
+                this.stop();
+                console.log('reached');
+            }
+
+            if (this.offset < 0 || Math.floor(this.offset) > this.path.length) {
                 this.stop();
             }
 
@@ -253,6 +256,8 @@
                 hover: 'purple'
             },
             label: {},
+            skills: {},
+            _skills: {}
         });
 
         this.tracks = opts.tracks;
@@ -260,6 +265,8 @@
         this.name = opts.name;
         this.duration = opts.duration;
         this.colors = opts.colors;
+        this.skills = opts.skills;
+        this._skills = opts._skills;
 
         this.labeling = _.defaults(opts.label, {
             xOffset: 5,
@@ -491,6 +498,10 @@
         });
     };
 
+    Station.prototype.arrive = function(car) {
+        console.log('Ive been hit!', car);
+    };
+
     function Timeline(opts, start, end) {
         var self = this;
 
@@ -697,7 +708,8 @@
             stations.push(new Station({
                 tracks: sTracks,
                 name: name,
-                time: timeline.convertTime(time)
+                time: timeline.convertTime(time),
+                _skills: $item.data('skills')
             }));
         });
 
@@ -730,6 +742,8 @@
             station.draw();
         });
 
+        skillspin.setup(stations);
+
         // var snake = new Snake();
         // tracks.snake = snake.track;
 
@@ -737,11 +751,11 @@
         //     speed: 50,
         //     size: 30
         // });
-        // 
  
-        $(document).keypress(function(event) {
-            if(event.which === 32) {
+        $(document).keypress(function(evt) {
+            if(evt.which === 32) {
                 toggle();
+                evt.preventDefault();
             }
         });
 
@@ -753,4 +767,4 @@
     };
 
     $(init);
-}(jQuery));
+}(jQuery, skillspin));

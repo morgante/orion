@@ -33,7 +33,8 @@ class Orion extends Theme
 		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/jquery.smooth-scroll.js', 'smooth-scroll', array('jquery') );
 		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/waypoints.jquery.js', 'waypoints', array('jquery') );
 		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/main.js', 'main', array('jquery', 'jscrollpane', 'subwaymap'));
-		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/lifemap.js', 'lifemap', array('jquery', 'paper', 'underscore', 'bootstrap'));
+		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/skillspin.js', 'skillspin', array('jquery', 'paper', 'underscore', 'bootstrap'));
+		Stack::add( 'template_header_javascript', Site::get_url('theme') . '/js/lifemap.js', 'lifemap', array('jquery', 'paper', 'underscore', 'bootstrap', 'skillspin'));
 		
 	}
 	
