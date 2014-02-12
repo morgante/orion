@@ -257,7 +257,8 @@
             },
             label: {},
             skills: {},
-            _skills: {}
+            _skills: {},
+            radius: 5
         });
 
         this.tracks = opts.tracks;
@@ -267,6 +268,9 @@
         this.colors = opts.colors;
         this.skills = opts.skills;
         this._skills = opts._skills;
+        this.radius = opts.radius;
+
+        this.colors.current = this.colors.normal;
 
         this.labeling = _.defaults(opts.label, {
             xOffset: 5,
@@ -311,14 +315,12 @@
     };
 
     Station.prototype.enter = function(event) {
-        this.station.strokeColor = this.colors.hover;
-        this.station.fillColor = this.colors.hover;
+        this.fill(this.colors.hover);
         document.body.style.cursor = "pointer";
     };
 
     Station.prototype.exit = function(event) {
-        this.station.strokeColor = this.colors.normal;
-        this.station.fillColor = this.colors.normal;
+        this.fill(this.colors.current);
         document.body.style.cursor = "default";
     };
 
@@ -344,6 +346,44 @@
         // });
     };
 
+    Station.prototype.animateSize = function(size) {
+        var circle = this.station;
+
+        size = size * 2;
+
+        var animator = function() {
+            var cSize = Math.round(circle.bounds.width);
+            if (cSize < size) {
+                circle.position.x -= 0.5;
+                circle.position.y -= 0.5;
+                circle.bounds.width++;
+                circle.bounds.height++;
+            } else if (cSize > size) {
+                circle.position.x += 0.5;
+                circle.position.y += 0.5;
+                circle.bounds.width--;
+                circle.bounds.height--;
+            } else {
+                // possible race condition
+                animators = _.without(animators, animator);
+            }
+        };
+
+        animators.push(animator);
+    };
+
+    Station.prototype.fill = function(color) {
+        this.station.fillColor = color;
+        this.station.strokeColor = color;
+    };
+
+    Station.prototype.inflate = function(color) {
+        var size = 10;
+        this.colors.current = color;
+        this.fill(color);
+        this.animateSize(size);
+    };
+
     Station.prototype.highlight = function() {
         if (this.$pointref === undefined) {
             return;
@@ -358,11 +398,15 @@
     };
 
     Station.prototype.unhighlight = function() {
-        if (this.$pointref === undefined) {
-            return;
+        if (this.$pointref !== undefined) {
+            this.$pointref.popover('hide');
         }
 
-        this.$pointref.popover('hide');
+        if (this.station !== undefined) {
+            this.colors.current = this.colors.normal;
+            this.fill(this.colors.normal);
+            this.animateSize(this.radius);
+        }
     };
 
     Station.prototype.draw = function() {
@@ -382,8 +426,9 @@
         // });
 
         // draw the station
-        var station = new paper.Path.Circle(point, 5);
+        var station = new paper.Path.Circle(point, self.radius);
         station.strokeColor = this.colors.normal;
+        station.strokeWidth = 0;
         station.fillColor = this.colors.normal;
         this.station = station;
 

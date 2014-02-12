@@ -1,6 +1,6 @@
-var skillspin = (function($) {
+var skillspin = (function($, d3, undefined) {
     var skills = {};
-    var stations = {};
+    var allStations = [];
     var tracks = {};
     var bounds = {
         x: 200,
@@ -9,7 +9,7 @@ var skillspin = (function($) {
     var layout;
     var canvas;
     var gears;
-    var colors = d3.scale.category20();
+    var colors = d3.scale.category10();
 
     function Skill(opts) {
         opts = _.defaults(opts, {
@@ -37,6 +37,19 @@ var skillspin = (function($) {
                 
         // var outerCircle = new paper.Path.Circle(p, 10);
         // outerCircle.fillColor = 'blue';
+    };
+
+    Skill.prototype.highlight = function() {
+        var skill = this;
+
+        _.each(this.stations, function(station) {
+            station.inflate(skill.color);
+        });
+
+        // unhighlight other stations
+        _.each(_.difference(allStations, this.stations), function(station) {
+            station.unhighlight();
+        });
     };
 
     function addStation(station) {
@@ -105,11 +118,18 @@ var skillspin = (function($) {
             .attr("cy", function(d) { return d.y; })
             .attr("r", function(d) { return d.r; });
 
+        gears.on("click", function(skillRep) {
+            var gear = this;
+            var skill = skills[skillRep.name];
+
+            skill.highlight();
+        });
+
         _.invoke(skills, 'draw');
     }
 
     function setup(stations) {
-        stations = stations;
+        allStations = stations;
 
         _.each(stations, addStation);
 
@@ -119,4 +139,4 @@ var skillspin = (function($) {
     return {
         setup: setup
     };
-}($));
+}($, d3));
