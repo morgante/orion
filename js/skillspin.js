@@ -34,6 +34,7 @@ var skillspin = (function($, d3, undefined) {
     };
 
     function mesh(a, b) {
+        console.log(a.radius, b.radius);
         var theta = Math.atan2(b.y - a.y, b.x - a.x);
         if (theta <= 0) {
             theta = 2 * Math.PI + theta;
@@ -42,7 +43,9 @@ var skillspin = (function($, d3, undefined) {
         var pitch = b.circularPitch + b.slopeAngle * 2 + b.addendumAngle;
         var radiusRatio = a.radius / b.radius;
 
-        return -(a.angle % (2 * Math.PI)) * radiusRatio + theta + theta * radiusRatio + pitch * 0.5;
+        var angle = -(a.angle % (2 * Math.PI)) * radiusRatio + theta + theta * radiusRatio + pitch * 0.5;
+        angle = angle * 2;
+        return angle;
     }
 
     Skill.prototype.rotate = function() {
@@ -109,7 +112,7 @@ var skillspin = (function($, d3, undefined) {
             axisScale: options.axisScale || 1.5,
             dragEvent: 'dragend'
         };
-        datum.radius = node.r - datum.addendum;
+        datum.radius = node.r - Math.round((datum.addendum / 1.5));
         datum.teeth = options.teeth || Math.round(datum.radius / 4);
         datum.rootRadius = datum.radius - datum.dedendum;
         datum.outsideRadius = datum.radius + datum.addendum;
