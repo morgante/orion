@@ -1,3 +1,10 @@
+/*
+    Spinning skill gears.
+
+    Based on: https://github.com/liabru/gears-d3-js
+
+ */
+
 var skillspin = (function($, d3, undefined) {
     var skills = {};
     var allStations = [];
