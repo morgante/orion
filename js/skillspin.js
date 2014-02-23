@@ -33,18 +33,30 @@ var skillspin = (function($, d3, undefined) {
         }
     };
 
-    Skill.prototype.makePath = function(node) {
-        var options = {};
+    function mesh(a, b) {
+        var theta = Math.atan2(b.y - a.y, b.x - a.x);
+        if (theta <= 0) {
+            theta = 2 * Math.PI + theta;
+        }
 
-        var addendum = options.addendum || 10;
-        var dedendum = options.dedendum || 0;
-        var thickness = options.thickness || 0.7;
+        var pitch = b.circularPitch + b.slopeAngle * 2 + b.addendumAngle;
+        var radiusRatio = a.radius / b.radius;
+        
+        b.angle = -(a.angle % (2 * Math.PI)) * radiusRatio + theta + theta * radiusRatio + pitch * 0.5;
+    }
 
-        var radius = node.r - addendum;
-        var teeth = this.options.teeth || Math.ceil(radius / 4);
+    Skill.prototype.makePath = function(d) {
+        var addendum = d.addendum || 12;
+        var dedendum = d.dedendum || 0;
+        var thickness = d.thickness || 0.7;
 
-        var profileSlope = options.profileSlope || 0.5;
-        var holeRadius = options.holeRadius || 5;
+        var radius = d.radius - addendum;
+        console.log(radius);
+        var holeRadius = d.holeRadius || radius * 0.5;
+        var teeth = d.teeth;
+
+        var profileSlope = d.profileSlope || 0.5;
+        
         var rootRadius = radius - dedendum;
         var outsideRadius = radius + addendum;
         var circularPitch = (1 - thickness) * 2 * Math.PI / teeth;
@@ -80,14 +92,37 @@ var skillspin = (function($, d3, undefined) {
     };
 
     Skill.prototype.draw = function(node) {
-        console.log(node);
+        var options = this.options;
 
-        var gear = canvas.append('g')
-                .attr('class', 'gear')
-                .attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
+        var datum = {
+            x: node.x || 0,
+            y: node.y || 0,
+            speed: options.power || 0,
+            power: options.power || 0,
+            angle: options.angle || 0,
+            addendum: options.addendum || 8,
+            dedendum: options.dedendum || 3,
+            thickness: options.thickness || 0.7,
+            profileSlope: options.profileSlope || 0.5,
+            holeRadius: options.holeRadius || 5,
+            axisScale: options.axisScale || 1.5,
+            dragEvent: 'dragend'
+        };
+        datum.radius = node.r || 30;
+        datum.teeth = options.teeth || Math.round(datum.radius / 4);
+        datum.rootRadius = datum.radius - datum.dedendum;
+        datum.outsideRadius = datum.radius + datum.addendum;
+        datum.circularPitch = (1 - datum.thickness) * 2 * Math.PI / datum.teeth;
+        datum.pitchAngle = datum.thickness * 2 * Math.PI / datum.teeth;
+        datum.slopeAngle = datum.pitchAngle * datum.profileSlope * 0.5;
+        datum.addendumAngle = datum.pitchAngle * (1 - datum.profileSlope);
 
-        gear.append("svg:path")
-            .attr("d", this.makePath(node))
+        this.gear = canvas.append('g')
+            .attr('class', 'gear')
+            .attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
+
+        this.path = gear.append("svg:path")
+            .attr("d", this.makePath(datum))
             .style("stroke-width", 2)
             .style("stroke", node.color)
             .style("fill", node.color);
