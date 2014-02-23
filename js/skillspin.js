@@ -79,16 +79,18 @@ var skillspin = (function($, d3, undefined) {
             .attr("r", function(d) { return d.r; });
     }
 
-    function drawGear() {
+    function drawGear(d) {
         var options = {};
 
-        var addendum = options.addendum || 10,
-            dedendum = options.dedendum || 0,
+        var addendum = options.addendum || 10;
+        var radius = d.r - addendum;
+
+
+        var dedendum = options.dedendum || 0,
             thickness = options.thickness || 0.7,
             profileSlope = options.profileSlope || 0.5,
             holeRadius = options.holeRadius || 5,
             teeth = options.teeth || 16,
-            radius = (options.radius || 200) - addendum,
             rootRadius = radius - dedendum,
             outsideRadius = radius + addendum,
             circularPitch = (1 - thickness) * 2 * Math.PI / teeth,
@@ -119,8 +121,6 @@ var skillspin = (function($, d3, undefined) {
         }
 
         path.push('M0,', -holeRadius, 'A', holeRadius, ',', holeRadius, ' 0 0,0 0,', holeRadius, 'A', holeRadius, ',', holeRadius, ' 0 0,0 0,', -holeRadius, 'Z');
-
-        console.log('ha ha ha');
 
         return path.join('');
     }
@@ -159,25 +159,33 @@ var skillspin = (function($, d3, undefined) {
             .data(layout.nodes(hierarchy))
             .enter().append("g");
         
-        gears = node.append("circle")
-            .attr("stroke", "black")
-            // .style("fill", function(d) { return d.color; })
-            .attr("cx", function(d) { return d.x; })
-            .attr("cy", function(d) { return d.y; })
-            .attr("r", function(d) { return d.r; });
+        // gears = node.append("circle")
+        //     .attr("stroke", "black")
+        //     // .style("fill", function(d) { return d.color; })
+        //     .attr("cx", function(d) { return d.x; })
+        //     .attr("cy", function(d) { return d.y; })
+        //     .attr("r", function(d) { return d.r; });
         
-        gears.append('path')
-                .attr('class', 'gear-path')
-                .attr('d', drawGear);
+        var nGears = node.append('g')
+                .attr('class', 'gear')
+                .attr('transform', function(d) {
+                    return 'translate(' + d.x + ', ' + d.y + ')';
+                });
 
-        gears.on("click", function(skillRep) {
-            var gear = this;
-            var skill = skills[skillRep.name];
+        nGears.append("svg:path")
+            .attr("d", drawGear)
+            .style("stroke-width", 2)
+            .style("stroke", "steelblue")
+            .style("fill", "none");
 
-            skill.highlight();
-        });
+        // gears.on("click", function(skillRep) {
+        //     var gear = this;
+        //     var skill = skills[skillRep.name];
 
-        _.invoke(skills, 'draw');
+        //     skill.highlight();
+        // });
+
+        // _.invoke(skills, 'draw');
     }
 
     function setup(stations) {
