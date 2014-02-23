@@ -33,6 +33,8 @@ var skillspin = (function($, d3, undefined) {
     };
 
     Skill.prototype.draw = function() {
+        // happens down below
+        
         // var p = new paper.Point(50, 50);
                 
         // var outerCircle = new paper.Path.Circle(p, 10);
@@ -77,6 +79,52 @@ var skillspin = (function($, d3, undefined) {
             .attr("r", function(d) { return d.r; });
     }
 
+    function drawGear() {
+        var options = {};
+
+        var addendum = options.addendum || 10,
+            dedendum = options.dedendum || 0,
+            thickness = options.thickness || 0.7,
+            profileSlope = options.profileSlope || 0.5,
+            holeRadius = options.holeRadius || 5,
+            teeth = options.teeth || 16,
+            radius = (options.radius || 200) - addendum,
+            rootRadius = radius - dedendum,
+            outsideRadius = radius + addendum,
+            circularPitch = (1 - thickness) * 2 * Math.PI / teeth,
+            pitchAngle = thickness * 2 * Math.PI / teeth,
+            slopeAngle = pitchAngle * profileSlope * 0.5,
+            addendumAngle = pitchAngle * (1 - profileSlope),
+            theta = (addendumAngle * 0.5 + slopeAngle),
+            path = ['M', rootRadius * Math.cos(theta), ',', rootRadius * Math.sin(theta)];
+
+        for(var i = 0; i < teeth; i++) {
+            theta += circularPitch;
+
+            path.push(
+              'A', rootRadius, ',', rootRadius, ' 0 0,1 ', rootRadius * Math.cos(theta), ',', rootRadius * Math.sin(theta),
+              'L', radius * Math.cos(theta), ',', radius * Math.sin(theta)
+            );
+
+            theta += slopeAngle;
+            path.push('L', outsideRadius * Math.cos(theta), ',', outsideRadius * Math.sin(theta));
+            theta += addendumAngle;
+            path.push('A', outsideRadius, ',', outsideRadius, ' 0 0,1 ', outsideRadius * Math.cos(theta), ',', outsideRadius * Math.sin(theta));
+            theta += slopeAngle;
+
+            path.push(
+                'L', radius * Math.cos(theta), ',', radius * Math.sin(theta),
+                'L', rootRadius * Math.cos(theta), ',', rootRadius * Math.sin(theta)
+            );
+        }
+
+        path.push('M0,', -holeRadius, 'A', holeRadius, ',', holeRadius, ' 0 0,0 0,', holeRadius, 'A', holeRadius, ',', holeRadius, ' 0 0,0 0,', -holeRadius, 'Z');
+
+        console.log('ha ha ha');
+
+        return path.join('');
+    }
+
     function draw() {
         // set up colors
         _.each(_.values(skills), function(skill, i) {
@@ -113,10 +161,14 @@ var skillspin = (function($, d3, undefined) {
         
         gears = node.append("circle")
             .attr("stroke", "black")
-            .style("fill", function(d) { return d.color; })
+            // .style("fill", function(d) { return d.color; })
             .attr("cx", function(d) { return d.x; })
             .attr("cy", function(d) { return d.y; })
             .attr("r", function(d) { return d.r; });
+        
+        gears.append('path')
+                .attr('class', 'gear-path')
+                .attr('d', drawGear);
 
         gears.on("click", function(skillRep) {
             var gear = this;
