@@ -44,9 +44,14 @@ var skillspin = (function($, d3, undefined) {
         var radiusRatio = a.radius / b.radius;
 
         var angle = -(a.angle % (2 * Math.PI)) * radiusRatio + theta + theta * radiusRatio + pitch * 0.5;
-        angle = angle * 2;
+        angle = angle * 2; // why? I do not know...
         return angle;
     }
+
+    Skill.prototype.animate = function() {
+        this.datum.angle = this.datum.angle + this.datum.speed;
+        this.rotate();
+    };
 
     Skill.prototype.rotate = function() {
         this.path.attr('transform', 'rotate(' + this.datum.angle * (360 / Math.PI) + ')');
@@ -101,7 +106,7 @@ var skillspin = (function($, d3, undefined) {
         var datum = {
             x: node.x || 0,
             y: node.y || 0,
-            speed: options.power || 0,
+            speed: options.power || 5,
             power: options.power || 0,
             angle: options.angle || 0,
             addendum: options.addendum || 10,
@@ -247,12 +252,19 @@ var skillspin = (function($, d3, undefined) {
         // _.invoke(skills, 'draw');
     }
 
+    function animate() {
+        d3.timer(function () {
+            _.invoke(skills, 'animate');
+        });
+    }
+
     function setup(stations) {
         allStations = stations;
 
         _.each(stations, addStation);
 
         draw();
+        animate();
     }
 
     return {
