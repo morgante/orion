@@ -41,37 +41,38 @@ var skillspin = (function($, d3, undefined) {
 
         var pitch = b.circularPitch + b.slopeAngle * 2 + b.addendumAngle;
         var radiusRatio = a.radius / b.radius;
-        
-        b.angle = -(a.angle % (2 * Math.PI)) * radiusRatio + theta + theta * radiusRatio + pitch * 0.5;
+
+        return -(a.angle % (2 * Math.PI)) * radiusRatio + theta + theta * radiusRatio + pitch * 0.5;
     }
 
+    Skill.prototype.rotate = function() {
+        this.path.attr('transform', 'rotate(' + this.datum.angle * (360 / Math.PI) + ')');
+    };
+
+    Skill.prototype.mesh = function(otherSkill) {
+        this.datum.angle = mesh(this.datum, otherSkill.datum);
+        this.rotate();
+    };
+
     Skill.prototype.makePath = function(d) {
-        var addendum = d.addendum || 12;
-        var dedendum = d.dedendum || 0;
-        var thickness = d.thickness || 0.7;
-
-        var radius = d.radius - addendum;
-        console.log(radius);
-        var holeRadius = d.holeRadius || radius * 0.5;
+        var outsideRadius = d.outsideRadius;
+        var slopeAngle = d.slopeAngle;
+        var theta = (d.addendumAngle * 0.5 + d.slopeAngle);
+        var radius = d.radius;
+        var holeRadius = d.holeRadius;
+        var rootRadius = d.rootRadius;
+        var circularPitch = d.circularPitch;
         var teeth = d.teeth;
+        var addendumAngle = d.addendumAngle;
 
-        var profileSlope = d.profileSlope || 0.5;
-        
-        var rootRadius = radius - dedendum;
-        var outsideRadius = radius + addendum;
-        var circularPitch = (1 - thickness) * 2 * Math.PI / teeth;
-        var pitchAngle = thickness * 2 * Math.PI / teeth;
-        var slopeAngle = pitchAngle * profileSlope * 0.5;
-        var addendumAngle = pitchAngle * (1 - profileSlope);
-        var theta = (addendumAngle * 0.5 + slopeAngle);
         var path = ['M', rootRadius * Math.cos(theta), ',', rootRadius * Math.sin(theta)];
 
-        for(var i = 0; i < teeth; i++) {
+        for (var i = 0; i < teeth; i++) {
             theta += circularPitch;
 
             path.push(
               'A', rootRadius, ',', rootRadius, ' 0 0,1 ', rootRadius * Math.cos(theta), ',', rootRadius * Math.sin(theta),
-              'L', radius * Math.cos(theta), ',', radius * Math.sin(theta)
+              'L', d.radius * Math.cos(theta), ',', d.radius * Math.sin(theta)
             );
 
             theta += slopeAngle;
@@ -100,15 +101,15 @@ var skillspin = (function($, d3, undefined) {
             speed: options.power || 0,
             power: options.power || 0,
             angle: options.angle || 0,
-            addendum: options.addendum || 8,
-            dedendum: options.dedendum || 3,
+            addendum: options.addendum || 10,
+            dedendum: options.dedendum || 0,
             thickness: options.thickness || 0.7,
             profileSlope: options.profileSlope || 0.5,
             holeRadius: options.holeRadius || 5,
             axisScale: options.axisScale || 1.5,
             dragEvent: 'dragend'
         };
-        datum.radius = node.r || 30;
+        datum.radius = node.r - datum.addendum;
         datum.teeth = options.teeth || Math.round(datum.radius / 4);
         datum.rootRadius = datum.radius - datum.dedendum;
         datum.outsideRadius = datum.radius + datum.addendum;
@@ -117,11 +118,13 @@ var skillspin = (function($, d3, undefined) {
         datum.slopeAngle = datum.pitchAngle * datum.profileSlope * 0.5;
         datum.addendumAngle = datum.pitchAngle * (1 - datum.profileSlope);
 
+        this.datum = datum;
+
         this.gear = canvas.append('g')
             .attr('class', 'gear')
             .attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
 
-        this.path = gear.append("svg:path")
+        this.path = this.gear.append("svg:path")
             .attr("d", this.makePath(datum))
             .style("stroke-width", 2)
             .style("stroke", node.color)
@@ -207,6 +210,8 @@ var skillspin = (function($, d3, undefined) {
             }
             node.skill.draw(node);
         });
+
+        skills.love.mesh(skills.him);
 
         // console.log(layout.nodes(hierarchy));
 
