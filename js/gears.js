@@ -94,7 +94,10 @@
             .duration(duration)
             .attr("transform", "rotate(" + degrees + ")")
             .each("end", function() {
-                self.parent.selectAll('.spoke').classed("hidden", false);
+                // only show if on an even
+                if (degrees % 45 === 0) {
+                    self.parent.selectAll('.spoke').classed("hidden", false);
+                }
             });
     };
 

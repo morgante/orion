@@ -74,6 +74,10 @@
 		this.spoke().classed("hover", false);
 	};
 
+	function positionate(percent) {
+		gear.rotate(percent * 360, 1); // instantly rotate gear
+	}
+
 	function drawGear() {
 		gear = orion.gears.create(canvas, {
 			x: bounds.x / 2,
@@ -176,9 +180,9 @@
 	}
 
 	function onScroll() {
-		var angle = $(window).scrollTop() / ($(document).height() - $(window).height()) * 360;
+		var percent = $(window).scrollTop() / ($(document).height() - $(window).height());
 
-		gear.rotate(angle, 1);
+		positionate(percent);
 	}
 
 	function init() {
