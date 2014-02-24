@@ -20,8 +20,9 @@
 
 #intro #nav ul li a {
 	display: block;
-	width: 80px;
-	height: 20px;
+	width: 120px;
+	height: 60px;
+	line-height: 60px;
 	font-size: 150%;
 	font-style: Helvetica;
 	color: #CCCCCC;
@@ -30,7 +31,10 @@
 
 /* colors! */
 #intro .spoke {
-	fill: #4EAB4E;
+	fill: transparent;
+}
+#intro .spoke.hover {
+	cursor: pointer;
 }
 #intro svg .spoke.intro.hover {
 	fill: red;

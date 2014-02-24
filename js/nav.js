@@ -25,7 +25,7 @@
 
 		var angle = rotation * (this.index - 2);
 
-		var x = (Math.cos(angle) * (bounds.x/2.2)) + (bounds.x / 2);
+		var x = (Math.cos(angle) * (bounds.x/2.3)) + (bounds.x / 2);
 		var y = (Math.sin(angle) * (bounds.x/2.4)) + (bounds.x / 2);
 
 		// compensate to use middle
@@ -81,6 +81,9 @@
 				}
 				
 				links[i].click();
+
+				var angle = i / links.length * 360;
+				gear.rotate(angle);
 			},
 			hover: function(i) {
 				i = i + 3;
@@ -101,8 +104,6 @@
 				links[i].unhover();
 			}
 		});
-
-		// gear.highlight(0);
 
 		$sections.each(function(i, el) {
 			links.push(new Link($(el)));

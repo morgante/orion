@@ -11,7 +11,8 @@
 			color: "blue",
 			x: 60,
 			y: 60,
-			addendum: 10
+			addendum: 10,
+            indicator: 'red'
 		});
 
 		var datum = {
@@ -38,23 +39,30 @@
         this.datum = datum;
         this.parent = parent;
 
-        this.gear = parent.append('g')
+        this.gear = this.parent.append('g')
             .attr('class', 'gear')
             .attr('transform', 'translate(' + datum.x + ', ' + datum.y + ')');
 
-        this.path = this.gear.append("svg:path")
-            .attr("d", makePath(datum))
-            .style("stroke-width", 2)
-            .style("stroke", options.color)
-            .style("fill", options.color);
+        this.rotator = this.gear.append('g');
 
         for (var i = 0; i < datum.teeth; i++) {
             this.gear.append("svg:path")
                 .data([i])
                 .attr('class', 'spoke')
                 .attr("d", makeSpoke(datum, i))
-                .style("stroke-width", 0)
+                .style("stroke-width", 0);
         }
+
+        this.path = this.rotator.append("svg:path")
+            .attr("d", makePath(datum))
+            .style("stroke-width", 2)
+            .style("stroke", options.color)
+            .style("fill", options.color);
+
+        this.rotator.append("svg:path")
+            .attr("d", makeSpoke(datum, datum.teeth - 3))
+            .style("stroke-width", 0)
+            .style('fill', 'red');
 
         if (options.click) {
             parent.selectAll('.spoke').on("click", function(d,i) {
@@ -76,6 +84,19 @@
 
         return this;
 	}
+
+    Gear.prototype.rotate = function(degrees, time) {
+        var self = this;
+        var duration = time || 1000;
+
+        this.parent.selectAll('.spoke').classed("hidden", true);
+        this.rotator.transition()
+            .duration(duration)
+            .attr("transform", "rotate(" + degrees + ")")
+            .each("end", function() {
+                self.parent.selectAll('.spoke').classed("hidden", false);
+            });
+    };
 
     Gear.prototype.highlight = function(i) {
        var spoke = this.fetch(i);
