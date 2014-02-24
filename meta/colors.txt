@@ -1,0 +1,20 @@
+yellow: #FFBE00
+dark red: #6D1E1E
+
+*** Dark Red: http://colorschemedesigner.com/#0011TncdGw0w0
+
+   var. 1 = #6D1C1C = rgb(109,28,28)
+   var. 2 = #522424 = rgb(82,36,36)
+   var. 3 = #470909 = rgb(71,9,9)
+   var. 4 = #B65151 = rgb(182,81,81)
+   var. 5 = #B66C6C = rgb(182,108,108)
+
+*** Yellow Two
+
+   var. 1 = #DA993C = rgb(218,153,60)
+   var. 2 = #A37F4B = rgb(163,127,75)
+   var. 3 = #8E5B14 = rgb(142,91,20)
+   var. 4 = #EDB76C = rgb(237,183,108)
+   var. 5 = #EDC58E = rgb(237,197,142)
+
+FFBE00
