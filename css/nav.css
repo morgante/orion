@@ -12,3 +12,13 @@
 	left: -1000px;
 	top: -1000px;
 }
+
+#intro #nav ul li a {
+	display: block;
+	width: 80px;
+	height: 20px;
+	font-size: 150%;
+	font-style: Helvetica;
+	color: #CCCCCC;
+	text-align: center;
+}

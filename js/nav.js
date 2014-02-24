@@ -17,8 +17,12 @@
 
 		var angle = rotation * (this.index - 2);
 
-		var x = (Math.cos(angle) * (bounds.x/2)) + (bounds.x / 2);
-		var y = (Math.sin(angle) * (bounds.x/2)) + (bounds.x / 2);
+		var x = (Math.cos(angle) * (bounds.x/2.2)) + (bounds.x / 2);
+		var y = (Math.sin(angle) * (bounds.x/2.4)) + (bounds.x / 2);
+
+		// compensate to use middle
+		x -= this.$el.width() / 2;
+		y -= this.$el.height() / 2;
 
 		this.$el.css("left", x);
 		this.$el.css("top", y);
