@@ -1,0 +1,14 @@
+#intro #nav {
+	width: 600px;
+	margin: 0 auto;
+}
+
+#intro #nav ul {
+	position: relative;
+}
+
+#intro #nav ul li {
+	position: absolute;
+	left: -1000px;
+	top: -1000px;
+}
