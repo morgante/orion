@@ -61,12 +61,12 @@
 			.friction(1)
 			.size([circle.radius * 2, circle.radius * 2]);
 
-		for (var i = 0; i < 10; i++) {
+		for (var i = 0; i < 5; i++) {
 			hierarchy.children.push({
 				"value": Math.floor((Math.random()*10)+1),
 				"color": colors(i),
 				dx: 0,
-				dy: 2
+				dy: -2
 			});
 		}
 
@@ -83,6 +83,7 @@
         
         var circles = node.append("circle")
 			.attr("stroke", "black")
+			.attr("stroke-width", 0)
 			.style("fill", function(d) { return d.color; })
 			.attr("cx", function(d) { return d.x; })
 			.attr("cy", function(d) { return d.y; })
@@ -92,28 +93,54 @@
 		
 		function cTick() {
 			circles.each(function(d) {
-				d.pythag = pythag(d) + d.r + 2;
+				d.theta = angle(d);
+
+				if (d.y < d.r) {
+					d.dy = 0;
+					d.y = d.r;
+				}
+
+				if (d.y < circle.radius) {
+					var eX = circle.radius + circle.radius * Math.sin(d.theta);
+					var eY = circle.radius - (circle.radius * Math.sin(d.theta));
+
+					if (d.x > eX) {
+						d.dx = -d.r;
+					} else if (d.x < eX) {
+						d.dx = d.r;
+					} else {
+						d.dx = 0;
+					}
+
+					if (d.y < eY) {
+						d.dY = 2;
+					} else {
+						d.dY = 0;
+					}
+					
+				}
+
 				d.px = d.x;
 				d.py = d.y;
 				d.y = d.y + d.dy;
 				d.x = d.x + d.dx;
 
-				if (d.pythag > circle.radius) {
-					if (d.y > circle.radius) {
-						d.dy = -2;
-					} else if (d.y < d.r) {
-						d.dy = 2;
-					}
-				}
+
+				// if (d.x < circle.radius) {
+					// d.dx = 0;
+				// }
+
+				// if (d.x > eX) {
+					// d.x = eX + d.r;
+					// d.dx = 0;
+				// }
 			});
 
 			var q = d3.geom.quadtree(force.nodes());
 
 			circles.each(function(d) {
-				// q.visit(collide(d));
+				q.visit(collide(d));
 			});
-
-			console.log('tick');
 
 			// move them into new places
 			circles
@@ -125,11 +152,17 @@
 
 		cTick();
 
-		d3.timer(cTick);
+		// d3.timer(cTick);
+
+		force.on("tick", cTick);
 
 		force.start();
 
-		// setTimeout(force.stop, 3000);
+		setTimeout(force.stop, 3000);
+	}
+
+	function angle(d) {
+		return Math.atan(d.y / (d.x - circle.radius));
 	}
 
 	function collide(node) {
@@ -157,13 +190,6 @@
 			}
 			return false;
 		};
-}
-
-	function pythag(d) {
-		var x = d.x - circle.radius;
-		var y = d.y - circle.radius;
-		// console.log(x, y);
-		return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 	}
 
 	function distance(d1, d2) {
