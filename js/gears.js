@@ -54,7 +54,6 @@
                 .attr('class', 'spoke')
                 .attr("d", makeSpoke(datum, i))
                 .style("stroke-width", 0)
-                .style("fill", options.color);
         }
 
         if (options.click) {

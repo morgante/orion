@@ -13,11 +13,15 @@
 		radius: 100
 	};
 	var gColor = '#4EAB4E';
+	var colors = d3.scale.category10();
 
 	function Link(el) {
 		this.$el = $(el);
 
 		this.index = this.$el.index();
+		this.$link = $('a', this.$el);
+
+		this.id = this.$link.data('section');
 
 		var angle = rotation * (this.index - 2);
 
@@ -30,6 +34,8 @@
 
 		this.$el.css("left", x);
 		this.$el.css("top", y);
+
+		this.spoke().classed(this.id, true);
 	}
 
 	Link.prototype.spoke = function() {
@@ -44,15 +50,18 @@
 	};
 
 	Link.prototype.click = function() {
+		this.spoke().classed(this.id, true);
 		console.log('I have been clicked', this.$el.text());
 	};
 
 	Link.prototype.hover = function() {
-		this.spoke().style("fill", "blue");
+		this.spoke().classed(this.id, true);
+		this.spoke().classed("hover", true);
 	};
 
 	Link.prototype.unhover = function() {
-		this.spoke().style("fill", gColor);
+		this.spoke().classed(this.id, true);
+		this.spoke().classed("hover", false);
 	};
 
 	function drawGear() {

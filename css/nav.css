@@ -27,3 +27,14 @@
 	color: #CCCCCC;
 	text-align: center;
 }
+
+/* colors! */
+#intro .spoke {
+	fill: #4EAB4E;
+}
+#intro svg .spoke.intro.hover {
+	fill: red;
+}
+#intro svg .spoke.contact.hover {
+	fill: blue;
+}
