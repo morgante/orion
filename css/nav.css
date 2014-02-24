@@ -42,3 +42,8 @@
 #intro svg .spoke.contact.hover {
 	fill: blue;
 }
+
+/* testing */
+.home {
+	height: 10000px;
+}

@@ -16,6 +16,8 @@
 	var colors = d3.scale.category10();
 
 	function Link(el) {
+		var self = this;
+
 		this.$el = $(el);
 
 		this.index = this.$el.index();
@@ -35,6 +37,11 @@
 		this.$el.css("left", x);
 		this.$el.css("top", y);
 
+		this.$link.click(function(evt) {
+			evt.preventDefault();
+			self.click();
+		});
+
 		this.spoke().classed(this.id, true);
 	}
 
@@ -52,6 +59,9 @@
 	Link.prototype.click = function() {
 		this.spoke().classed(this.id, true);
 		console.log('I have been clicked', this.$el.text());
+
+		var angle = this.index / links.length * 360;
+		gear.rotate(angle);
 	};
 
 	Link.prototype.hover = function() {
@@ -81,9 +91,6 @@
 				}
 				
 				links[i].click();
-
-				var angle = i / links.length * 360;
-				gear.rotate(angle);
 			},
 			hover: function(i) {
 				i = i + 3;
@@ -168,11 +175,19 @@
 		drawCircles();
 	}
 
+	function onScroll() {
+		var angle = $(window).scrollTop() / ($(document).height() - $(window).height()) * 360;
+
+		gear.rotate(angle, 1);
+	}
+
 	function init() {
 
 		$sections = $('#nav ul li');
 
 		draw();
+
+		$(window).scroll(onScroll);
 	}
 
 	orion.nav = orion.nav || {
