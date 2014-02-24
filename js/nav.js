@@ -53,7 +53,7 @@
 		var layout = d3.layout.pack()
             .sort(null)
             .size([circle.radius * 2, circle.radius * 2])
-            .padding(5);
+            .padding(10);
 
         var force = d3.layout.force()
 			.gravity(0)
@@ -61,7 +61,7 @@
 			.friction(1)
 			.size([circle.radius * 2, circle.radius * 2]);
 
-		for (var i = 0; i < 2; i++) {
+		for (var i = 0; i < 10; i++) {
 			hierarchy.children.push({
 				"value": Math.floor((Math.random()*10)+1),
 				"color": colors(i),
@@ -92,29 +92,21 @@
 		
 		function cTick() {
 			circles.each(function(d) {
+				d.pythag = pythag(d) + d.r + 2;
 				d.px = d.x;
 				d.py = d.y;
 				d.y = d.y + d.dy;
 				d.x = d.x + d.dx;
-				d.pythag = pythag(d) + d.r + 2;
 
 				if (d.pythag > circle.radius) {
-					// outside the circle
-					if (d.y > circle.radius) {
-						// d.y -= (d.pythag - circle.radius);
-					}
-
 					// roll towards center
-					if (d.x > circle.radius) {
-						d.dx = -2;
+					if (d.x > circle.radius * 2) {
+						d.dx += -2;
 					} else if (d.x < circle.radius) {
-						d.dx = 2;
+						d.dx += 2;
 					}
 
-					d.dy = 0;
-				} else {
-					d.dy = 2;
-					d.dx = 0;
+					d.dy -= 2;
 				}
 			});
 
@@ -124,7 +116,7 @@
 				q.visit(collide(d));
 			});
 
-			console.log('tick tock');
+			console.log('tick');
 
 			// move them into new places
 			circles
@@ -136,7 +128,7 @@
 
 		cTick();
 
-		force.on("tick", cTick);
+		d3.timer(cTick);
 
 		force.start();
 
@@ -152,22 +144,21 @@
 
 		return function(quad, x1, y1, x2, y2) {
 			if (quad.point && (quad.point !== node)) {
-				var x = node.x - quad.point.x,
-				y = node.y - quad.point.y,
-				l = Math.sqrt(x * x + y * y),
-				r = node.radius + quad.point.radius;
-				if (l < r) {
-					l = (l - r) / l * .5;
-					node.dx = x *= l;
-					node.dy = y *= l;
-					quad.point.dx = x;
-					quad.point.dy = y;
+				if (distance(quad.point, node) < (node.r + quad.point.r)) {
+					if (quad.point.x > node.x) {
+						node.dx = -1;
+					} else {
+						node.dx = 1;
+					}
+
+					if (quad.point.y > node.y) {
+						node.dy = -1;
+					} else {
+						node.dy = 1;
+					}
 				}
 			}
-			return x1 > nx2
-				|| x2 < nx1
-				|| y1 > ny2
-				|| y2 < ny1;
+			return false;
 		};
 }
 
@@ -175,6 +166,13 @@
 		var x = d.x - circle.radius;
 		var y = d.y - circle.radius;
 		// console.log(x, y);
+		return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+	}
+
+	function distance(d1, d2) {
+		var x = d2.x - d1.x;
+		var y = d2.y - d1.y;
+
 		return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 	}
 
