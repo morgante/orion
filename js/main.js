@@ -7,7 +7,8 @@ $(document).ready(function() {
 	// layout.init();
 	contactForm.init();
 
-	// init nav
+	// init orion components
+	orion.layout.init();
 	orion.nav.init();
 });
 

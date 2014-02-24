@@ -1,9 +1,12 @@
-#intro {
+#intro #nav {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
 	background: #6D1E1E url('../images/stripes-red.png');
-	height: 1000px;
 }
 
-#intro #nav {
+#intro #nav .contents {
 	width: 800px;
 	margin: 0 auto;
 }
@@ -45,5 +48,6 @@
 
 /* testing */
 .home {
-	height: 10000px;
 }
+
+/* paging */

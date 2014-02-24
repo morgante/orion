@@ -60,6 +60,10 @@
 		this.spoke().classed(this.id, true);
 		console.log('I have been clicked', this.$el.text());
 
+		$.smoothScroll({
+			scrollTarget: this.$link.attr('href')
+		});
+
 		var angle = this.index / links.length * 360;
 		gear.rotate(angle);
 	};
@@ -75,6 +79,10 @@
 	};
 
 	function positionate(percent) {
+		var h = Math.max(200, orion.layout.height() * (1 - (percent / (1 / links.length))));
+
+		$('#nav').height(h);
+
 		gear.rotate(percent * 360, 1); // instantly rotate gear
 	}
 
@@ -171,7 +179,7 @@
 	}
 
 	function draw() {
-		canvas = d3.select("#nav").append("svg")
+		canvas = d3.select("#nav .contents").append("svg")
 			.attr("width", bounds.x)
 			.attr("height", bounds.y);
 
@@ -191,6 +199,8 @@
 
 		draw();
 
+		positionate(0);
+		onScroll();
 		$(window).scroll(onScroll);
 	}
 
