@@ -99,21 +99,18 @@
 				d.x = d.x + d.dx;
 
 				if (d.pythag > circle.radius) {
-					// roll towards center
-					if (d.x > circle.radius * 2) {
-						d.dx += -2;
-					} else if (d.x < circle.radius) {
-						d.dx += 2;
+					if (d.y > circle.radius) {
+						d.dy = -2;
+					} else if (d.y < d.r) {
+						d.dy = 2;
 					}
-
-					d.dy -= 2;
 				}
 			});
 
 			var q = d3.geom.quadtree(force.nodes());
 
 			circles.each(function(d) {
-				q.visit(collide(d));
+				// q.visit(collide(d));
 			});
 
 			console.log('tick');
