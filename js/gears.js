@@ -45,16 +45,20 @@
             .style("stroke", options.color)
             .style("fill", options.color);
 
-        this.spokes = [];
+        for (var i = 0; i < datum.teeth; i++) {
+            this.gear.append("svg:path")
+                .data([i])
+                .attr('class', 'spoke')
+                .attr("d", makeSpoke(datum, i))
+                .style("stroke-width", 0)
+                .style("fill", options.color);
+        }
 
-        // for ()
-        this.spokes.push(this.gear.append("svg:path")
-            .attr("d", makeSpoke(datum, 3))
-            .style("stroke-width", 2)
-            .style("stroke", options.color)
-            .style("fill", "red"));
-
-		// console.log(this.options);
+        if (options.click) {
+            parent.selectAll('.spoke').on("click", function(d,i) {
+                options.click(i);
+            });
+        }
 	}
 
     function makeSpoke(d, target) {

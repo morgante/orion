@@ -31,6 +31,10 @@
 		this.$el.css("top", y);
 	}
 
+	Link.prototype.click = function() {
+		console.log('I have been clicked', this.$el.text());
+	};
+
 	function drawGear() {
 		gear = orion.gears.create(canvas, {
 			x: bounds.x / 2,
@@ -39,7 +43,16 @@
 			holeRadius: circle.radius,
 			addendum: 80,
 			teeth: 8,
-			color: '#4EAB4E'
+			color: '#4EAB4E',
+			click: function(i) {
+				i = i + 3;
+
+				if (i >= links.length) {
+					i = i - links.length;
+				}
+				
+				links[i].click();
+			}
 		});
 
 		$sections.each(function(i, el) {
