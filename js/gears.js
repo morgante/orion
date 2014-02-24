@@ -1,6 +1,8 @@
 (function($, orion) {
 
 	function Gear(parent, options) {
+        var self = this;
+
 		options = options || {};
 
 		this.options = _.defaults(options, {
@@ -34,6 +36,7 @@
         datum.slopeAngle = datum.pitchAngle * datum.profileSlope * 0.5;
         datum.addendumAngle = datum.pitchAngle * (1 - datum.profileSlope);
         this.datum = datum;
+        this.parent = parent;
 
         this.gear = parent.append('g')
             .attr('class', 'gear')
@@ -56,10 +59,23 @@
 
         if (options.click) {
             parent.selectAll('.spoke').on("click", function(d,i) {
-                options.click(i);
+                options.click.call(self, i);
             });
         }
+
+        return this;
 	}
+
+    Gear.prototype.highlight = function(spoke) {
+        var spoke = this.parent.selectAll('.spoke').filter(function(d, i) { return i == spoke; });
+
+        console.log(spoke);
+
+        spoke.style("fill", "red");
+
+        console.log(spoke);
+        // console.log('highlight spoke i', spoke);
+    };
 
     function makeSpoke(d, target) {
         var outsideRadius = d.outsideRadius;
@@ -146,6 +162,8 @@
     }
 
 	orion.gears = orion.gears || {
-		create: Gear
+		create: function(parent, options) {
+            return new Gear(parent, options);
+        }
 	};
 }(jQuery, orion));

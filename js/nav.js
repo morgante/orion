@@ -45,6 +45,8 @@
 			teeth: 8,
 			color: '#4EAB4E',
 			click: function(i) {
+				this.highlight(i);
+
 				i = i + 3;
 
 				if (i >= links.length) {
@@ -54,6 +56,8 @@
 				links[i].click();
 			}
 		});
+
+		// gear.highlight(0);
 
 		$sections.each(function(i, el) {
 			links.push(new Link($(el)));
