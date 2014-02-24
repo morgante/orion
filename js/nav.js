@@ -61,7 +61,7 @@
 			.friction(1)
 			.size([circle.radius * 2, circle.radius * 2]);
 
-		for (var i = 0; i < 10; i++) {
+		for (var i = 0; i < 2; i++) {
 			hierarchy.children.push({
 				"value": Math.floor((Math.random()*10)+1),
 				"color": colors(i),
@@ -90,8 +90,7 @@
 
 		// force.nodes(layout.nodes());
 		
-
-		force.on("tick", function () {
+		function cTick() {
 			circles.each(function(d) {
 				d.px = d.x;
 				d.py = d.y;
@@ -102,7 +101,7 @@
 				if (d.pythag > circle.radius) {
 					// outside the circle
 					if (d.y > circle.radius) {
-						d.y -= (d.pythag - circle.radius);
+						// d.y -= (d.pythag - circle.radius);
 					}
 
 					// roll towards center
@@ -113,21 +112,64 @@
 					}
 
 					d.dy = 0;
-
 				} else {
 					d.dy = 2;
 					d.dx = 0;
 				}
 			});
+
+			var q = d3.geom.quadtree(force.nodes());
+
+			circles.each(function(d) {
+				q.visit(collide(d));
+			});
+
+			console.log('tick tock');
+
+			// move them into new places
 			circles
 				.attr("cx", function (d) { return d.x; })
 				.attr("cy", function (d) { return d.y; });
-		});
+
+			
+		}
+
+		cTick();
+
+		force.on("tick", cTick);
 
 		force.start();
 
-		setTimeout(force.stop, 3000);
+		// setTimeout(force.stop, 3000);
 	}
+
+	function collide(node) {
+		var r = node.r + 16;
+		var nx1 = node.x - r;
+		var nx2 = node.x + r;
+		var ny1 = node.y - r;
+		var ny2 = node.y + r;
+
+		return function(quad, x1, y1, x2, y2) {
+			if (quad.point && (quad.point !== node)) {
+				var x = node.x - quad.point.x,
+				y = node.y - quad.point.y,
+				l = Math.sqrt(x * x + y * y),
+				r = node.radius + quad.point.radius;
+				if (l < r) {
+					l = (l - r) / l * .5;
+					node.dx = x *= l;
+					node.dy = y *= l;
+					quad.point.dx = x;
+					quad.point.dy = y;
+				}
+			}
+			return x1 > nx2
+				|| x2 < nx1
+				|| y1 > ny2
+				|| y2 < ny1;
+		};
+}
 
 	function pythag(d) {
 		var x = d.x - circle.radius;
