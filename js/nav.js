@@ -30,9 +30,19 @@
 		this.label(2.3, bounds.x);
 
 		this.spoke().classed(this.id, true);
+
+		this.$link.mouseover(function(evt) {
+			self.hover();
+		});
+
+		this.$link.mouseleave(function(evt) {
+			self.unhover();
+		});
 	}
 
 	Link.prototype.label = function(factor, r) {
+		var self = this;
+
 		var angle = rotation * (this.index - 2);
 
 		var x = (Math.cos(angle) * (r/factor)) + (r / 2);
@@ -203,7 +213,7 @@
 	}
 
 	function draw() {
-		canvas = d3.select("#nav .contents").append("svg")
+		canvas = d3.select("#nav .contents").insert("svg", "ul")
 			.attr("width", bounds.x)
 			.attr("height", bounds.y);
 

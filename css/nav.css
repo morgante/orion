@@ -14,11 +14,11 @@
 }
 
 #intro #nav ul {
-	position: relative;
+	position: absolute;
 	left: 0;
 	top: 0;
-	width: 800px;
-	height: 800px;
+	width: 0px;
+	height: 0px;
 }
 
 #intro #nav ul li {
@@ -36,6 +36,7 @@
 	font-style: Helvetica;
 	color: #CCCCCC;
 	text-align: center;
+	z-index: -1000;
 }
 
 #intro #nav .contents svg {
