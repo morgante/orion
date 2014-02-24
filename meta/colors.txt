@@ -17,4 +17,8 @@ dark red: #6D1E1E
    var. 4 = #EDB76C = rgb(237,183,108)
    var. 5 = #EDC58E = rgb(237,197,142)
 
+
+Greens:
+185718   1E411E   083908   4EAB4E   67AB67
+
 FFBE00

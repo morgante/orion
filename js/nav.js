@@ -3,8 +3,8 @@
 	var canvas;
 	var gear;
 	var bounds = {
-		x: 600,
-		y: 600
+		x: 800,
+		y: 800
 	};
 	var links = [];
 	var $sections;
@@ -37,9 +37,10 @@
 			x: bounds.x / 2,
 			y: bounds.y / 2,
 			radius: bounds.x / 3,
-			holeRadius: 60,
-			addendum: 50,
-			teeth: 8
+			holeRadius: 120,
+			addendum: 80,
+			teeth: 8,
+			color: '#4EAB4E'
 		});
 
 		var angle = (45 / 360) * Math.PI;
