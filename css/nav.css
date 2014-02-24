@@ -2,6 +2,7 @@
 	position: fixed;
 	left: 0;
 	top: 0;
+	padding-top: 10px;
 	width: 100%;
 	background: #6D1E1E url('../images/stripes-red.png');
 }
@@ -9,10 +10,15 @@
 #intro #nav .contents {
 	width: 800px;
 	margin: 0 auto;
+	position: relative;
 }
 
 #intro #nav ul {
 	position: relative;
+	left: 0;
+	top: 0;
+	width: 800px;
+	height: 800px;
 }
 
 #intro #nav ul li {
@@ -30,6 +36,12 @@
 	font-style: Helvetica;
 	color: #CCCCCC;
 	text-align: center;
+}
+
+#intro #nav .contents svg {
+	position: absolute;
+	left: 0;
+	top: 0;
 }
 
 /* colors! */

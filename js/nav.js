@@ -23,12 +23,20 @@
 		this.index = this.$el.index();
 		this.$link = $('a', this.$el);
 
+		this.$link.data('label', this.$link.text());
+
 		this.id = this.$link.data('section');
 
+		this.label(2.3, bounds.x);
+
+		this.spoke().classed(this.id, true);
+	}
+
+	Link.prototype.label = function(factor, r) {
 		var angle = rotation * (this.index - 2);
 
-		var x = (Math.cos(angle) * (bounds.x/2.3)) + (bounds.x / 2);
-		var y = (Math.sin(angle) * (bounds.x/2.4)) + (bounds.x / 2);
+		var x = (Math.cos(angle) * (r/factor)) + (r / 2);
+		var y = (Math.sin(angle) * (r/factor)) + (r / 2);
 
 		// compensate to use middle
 		x -= this.$el.width() / 2;
@@ -41,9 +49,7 @@
 			evt.preventDefault();
 			self.click();
 		});
-
-		this.spoke().classed(this.id, true);
-	}
+	};
 
 	Link.prototype.spoke = function() {
 		var i = this.$el.index();
@@ -80,8 +86,26 @@
 
 	function positionate(percent) {
 		var h = Math.max(200, orion.layout.height() * (1 - (percent / (1 / links.length))));
+		var scale = ((h / orion.layout.height()));
 
-		$('#nav').height(h);
+		$('#nav').height(h + 10)
+		$('#nav .contents').css('transform', 'scale(' + scale + ')');
+		$('#nav .contents a').css('font-size', 18 / scale);
+		$('#nav .contents a').css('width', 120 / scale);
+
+		_.each(links, function(link) {
+			link.label(2.2, bounds.x);
+		});
+
+		if (scale < 0.5) {
+			$('#nav .contents a').each(function(i, el) {
+				$(el).text($(el).data('label')[0]);
+			});
+		} else {
+			$('#nav .contents a').each(function(i, el) {
+				$(el).text($(el).data('label'));
+			});
+		}
 
 		gear.rotate(percent * 360, 1); // instantly rotate gear
 	}
