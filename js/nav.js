@@ -10,7 +10,7 @@
 	var $sections;
 	var rotation = 45 / 180 * Math.PI;
 	var circle = {
-		radius: 200
+		radius: 100
 	};
 
 	function Link(el) {
@@ -36,7 +36,7 @@
 			x: bounds.x / 2,
 			y: bounds.y / 2,
 			radius: bounds.x / 3,
-			holeRadius: circle.radius / 2,
+			holeRadius: circle.radius,
 			addendum: 80,
 			teeth: 8,
 			color: '#4EAB4E'
@@ -49,34 +49,82 @@
 
 	function drawCircles() {
 		var colors = d3.scale.category10();
-		var hierarchy = {"children": []};
+		var hierarchy = {"dx": 0, "dy": 0, "children": []};
 		var layout = d3.layout.pack()
             .sort(null)
-            .size([circle.radius, circle.radius])
-            .padding(0);
+            .size([circle.radius * 2, circle.radius * 2])
+            .padding(5);
 
-		for (var i = 0; i < Math.floor((Math.random()*5)+5); i++) {
+        var force = d3.layout.force()
+			.gravity(0)
+			.charge(0)
+			.friction(1)
+			.size([circle.radius * 2, circle.radius * 2]);
+
+		for (var i = 0; i < 10; i++) {
 			hierarchy.children.push({
 				"value": Math.floor((Math.random()*10)+1),
 				"color": colors(i),
+				dx: 0,
+				dy: 2
 			});
 		}
 
 		var container = canvas.append("g")
-			.attr('transform', 'translate(' + (bounds.x / 2 - circle.radius / 2) + ', ' + (bounds.y / 2 - circle.radius / 2) + ')');
+			.attr('transform', 'translate(' + (bounds.x / 2 - circle.radius) + ', ' + (bounds.y / 2 - circle.radius) + ')');
+
+		layout.nodes(hierarchy);
+
+		force.nodes(layout.nodes(hierarchy)[0].children);
 
 		var node = container.selectAll(".node")
-            .data(layout.nodes(hierarchy))
+            .data(force.nodes())
             .enter().append("g");
         
-        gears = node.append("circle")
-            .attr("stroke", "black")
-            .style("fill", function(d) { return d.color; })
-            .attr("cx", function(d) { return d.x; })
-            .attr("cy", function(d) { return d.y; })
-            .attr("r", function(d) { return d.r; });
+        var circles = node.append("circle")
+			.attr("stroke", "black")
+			.style("fill", function(d) { return d.color; })
+			.attr("cx", function(d) { return d.x; })
+			.attr("cy", function(d) { return d.y; })
+			.attr("r", function(d) { return d.r; });
 
+		// force.nodes(layout.nodes());
+		
 
+		force.on("tick", function () {
+			circles.each(function(d) {
+				d.px = d.x;
+				d.py = d.y;
+				d.y = d.y + d.dy;
+				d.x = d.x + d.dx;
+
+				if (pythag(d) + d.r > circle.radius) {
+					d.dy = 0;
+				}
+			});
+			circles
+				.attr("cx", function (d) { return d.x; })
+				.attr("cy", function (d) { return d.y; });
+
+			// var q = d3.geom.quadtree(nodes),
+		 //      i = 0,
+		 //      n = nodes.length;
+
+		 //  while (++i < n) {
+		 //    q.visit(collide(nodes[i]));
+		 //  }
+		});
+
+		force.start();
+
+		setTimeout(force.stop, 1000);
+	}
+
+	function pythag(d) {
+		var x = d.x - circle.radius;
+		var y = d.y - circle.radius;
+		// console.log(x, y);
+		return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 	}
 
 	function draw() {
