@@ -63,18 +63,29 @@
             });
         }
 
+        if (options.hover) {
+            parent.selectAll('.spoke').on("mouseover", function(d,i) {
+                options.hover.call(self, i);
+            });
+        }
+
+        if (options.unhover) {
+            parent.selectAll('.spoke').on("mouseout", function(d,i) {
+                options.unhover.call(self, i);
+            });
+        }
+
         return this;
 	}
 
-    Gear.prototype.highlight = function(spoke) {
-        var spoke = this.parent.selectAll('.spoke').filter(function(d, i) { return i == spoke; });
-
-        console.log(spoke);
+    Gear.prototype.highlight = function(i) {
+       var spoke = this.fetch(i);
 
         spoke.style("fill", "red");
+    };
 
-        console.log(spoke);
-        // console.log('highlight spoke i', spoke);
+    Gear.prototype.fetch = function(spoke) {
+        return this.parent.selectAll('.spoke').filter(function(d, i) { return i == spoke; });
     };
 
     function makeSpoke(d, target) {

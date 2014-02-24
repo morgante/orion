@@ -12,6 +12,7 @@
 	var circle = {
 		radius: 100
 	};
+	var gColor = '#4EAB4E';
 
 	function Link(el) {
 		this.$el = $(el);
@@ -31,8 +32,27 @@
 		this.$el.css("top", y);
 	}
 
+	Link.prototype.spoke = function() {
+		var i = this.$el.index();
+
+		i = i - 3;
+
+		if (i < 0) {
+			i = links.length + i;
+		}
+		return gear.fetch(i);
+	};
+
 	Link.prototype.click = function() {
 		console.log('I have been clicked', this.$el.text());
+	};
+
+	Link.prototype.hover = function() {
+		this.spoke().style("fill", "blue");
+	};
+
+	Link.prototype.unhover = function() {
+		this.spoke().style("fill", gColor);
 	};
 
 	function drawGear() {
@@ -43,10 +63,8 @@
 			holeRadius: circle.radius,
 			addendum: 80,
 			teeth: 8,
-			color: '#4EAB4E',
+			color: gColor,
 			click: function(i) {
-				this.highlight(i);
-
 				i = i + 3;
 
 				if (i >= links.length) {
@@ -54,6 +72,24 @@
 				}
 				
 				links[i].click();
+			},
+			hover: function(i) {
+				i = i + 3;
+
+				if (i >= links.length) {
+					i = i - links.length;
+				}
+				
+				links[i].hover();
+			},
+			unhover: function(i) {
+				i = i + 3;
+
+				if (i >= links.length) {
+					i = i - links.length;
+				}
+
+				links[i].unhover();
 			}
 		});
 
