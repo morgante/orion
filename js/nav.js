@@ -97,27 +97,36 @@
 				d.py = d.y;
 				d.y = d.y + d.dy;
 				d.x = d.x + d.dx;
+				d.pythag = pythag(d) + d.r + 2;
 
-				if (pythag(d) + d.r > circle.radius) {
+				if (d.pythag > circle.radius) {
+					// outside the circle
+					if (d.y > circle.radius) {
+						d.y -= (d.pythag - circle.radius);
+					}
+
+					// roll towards center
+					if (d.x > circle.radius) {
+						d.dx = -2;
+					} else if (d.x < circle.radius) {
+						d.dx = 2;
+					}
+
 					d.dy = 0;
+
+				} else {
+					d.dy = 2;
+					d.dx = 0;
 				}
 			});
 			circles
 				.attr("cx", function (d) { return d.x; })
 				.attr("cy", function (d) { return d.y; });
-
-			// var q = d3.geom.quadtree(nodes),
-		 //      i = 0,
-		 //      n = nodes.length;
-
-		 //  while (++i < n) {
-		 //    q.visit(collide(nodes[i]));
-		 //  }
 		});
 
 		force.start();
 
-		setTimeout(force.stop, 1000);
+		setTimeout(force.stop, 3000);
 	}
 
 	function pythag(d) {
