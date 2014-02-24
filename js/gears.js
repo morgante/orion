@@ -45,12 +45,65 @@
             .style("stroke", options.color)
             .style("fill", options.color);
 
+        this.spokes = [];
+
+        // for ()
+        this.spokes.push(this.gear.append("svg:path")
+            .attr("d", makeSpoke(datum, 3))
+            .style("stroke-width", 2)
+            .style("stroke", options.color)
+            .style("fill", "red"));
+
 		// console.log(this.options);
 	}
 
-	function makePath(d) {
-		console.log(d);
+    function makeSpoke(d, target) {
+        var outsideRadius = d.outsideRadius;
+        var slopeAngle = d.slopeAngle;
+        var theta = (d.addendumAngle * 0.5 + d.slopeAngle);
+        var radius = d.radius;
+        var holeRadius = d.holeRadius;
+        var rootRadius = d.rootRadius;
+        var circularPitch = d.circularPitch;
+        var teeth = d.teeth;
+        var addendumAngle = d.addendumAngle;
 
+        var path = [];
+
+        path.push('M0,0');
+
+        for (var i = 0; i < teeth; i++) {
+            theta += circularPitch;
+
+            if (i == target) {
+                path.push(
+                  'L', d.radius * Math.cos(theta), ',', d.radius * Math.sin(theta)
+                );
+            }
+            
+            
+            theta += slopeAngle;
+            if (i == target) {
+                path.push('L', outsideRadius * Math.cos(theta), ',', outsideRadius * Math.sin(theta));
+            }
+            theta += addendumAngle;
+            if (i == target) {
+                path.push('A', outsideRadius, ',', outsideRadius, ' 0 0,1 ', outsideRadius * Math.cos(theta), ',', outsideRadius * Math.sin(theta));
+            }
+            theta += slopeAngle;
+
+            if (i == target) {
+                path.push(
+                    'L', radius * Math.cos(theta), ',', radius * Math.sin(theta),
+                    'L', rootRadius * Math.cos(theta), ',', rootRadius * Math.sin(theta)
+                );
+            }
+        }
+
+        return path.join('');
+    }
+
+	function makePath(d) {
         var outsideRadius = d.outsideRadius;
         var slopeAngle = d.slopeAngle;
         var theta = (d.addendumAngle * 0.5 + d.slopeAngle);
@@ -86,7 +139,7 @@
         path.push('M0,', -holeRadius, 'A', holeRadius, ',', holeRadius, ' 0 0,0 0,', holeRadius, 'A', holeRadius, ',', holeRadius, ' 0 0,0 0,', -holeRadius, 'Z');
 
         return path.join('');
-    };
+    }
 
 	orion.gears = orion.gears || {
 		create: Gear
