@@ -9,6 +9,9 @@
 	var links = [];
 	var $sections;
 	var rotation = 45 / 180 * Math.PI;
+	var circle = {
+		radius: 200
+	};
 
 	function Link(el) {
 		this.$el = $(el);
@@ -28,26 +31,61 @@
 		this.$el.css("top", y);
 	}
 
-	function draw() {
-		canvas = d3.select("#nav").append("svg")
-			.attr("width", bounds.x)
-			.attr("height", bounds.y);
-
+	function drawGear() {
 		gear = orion.gears.create(canvas, {
 			x: bounds.x / 2,
 			y: bounds.y / 2,
 			radius: bounds.x / 3,
-			holeRadius: 120,
+			holeRadius: circle.radius / 2,
 			addendum: 80,
 			teeth: 8,
 			color: '#4EAB4E'
 		});
 
-		var angle = (45 / 360) * Math.PI;
-
 		$sections.each(function(i, el) {
 			links.push(new Link($(el)));
 		});
+	}
+
+	function drawCircles() {
+		var colors = d3.scale.category10();
+		var hierarchy = {"children": []};
+		var layout = d3.layout.pack()
+            .sort(null)
+            .size([circle.radius, circle.radius])
+            .padding(0);
+
+		for (var i = 0; i < Math.floor((Math.random()*5)+5); i++) {
+			hierarchy.children.push({
+				"value": Math.floor((Math.random()*10)+1),
+				"color": colors(i),
+			});
+		}
+
+		var container = canvas.append("g")
+			.attr('transform', 'translate(' + (bounds.x / 2 - circle.radius / 2) + ', ' + (bounds.y / 2 - circle.radius / 2) + ')');
+
+		var node = container.selectAll(".node")
+            .data(layout.nodes(hierarchy))
+            .enter().append("g");
+        
+        gears = node.append("circle")
+            .attr("stroke", "black")
+            .style("fill", function(d) { return d.color; })
+            .attr("cx", function(d) { return d.x; })
+            .attr("cy", function(d) { return d.y; })
+            .attr("r", function(d) { return d.r; });
+
+
+	}
+
+	function draw() {
+		canvas = d3.select("#nav").append("svg")
+			.attr("width", bounds.x)
+			.attr("height", bounds.y);
+
+		drawGear();
+		drawCircles();
 	}
 
 	function init() {
