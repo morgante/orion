@@ -53,7 +53,7 @@
 		var layout = d3.layout.pack()
             .sort(null)
             .size([circle.radius * 2, circle.radius * 2])
-            .padding(10);
+            .padding(-1);
 
         var force = d3.layout.force()
 			.gravity(0)
@@ -73,12 +73,14 @@
 		var container = canvas.append("g")
 			.attr('transform', 'translate(' + (bounds.x / 2 - circle.radius) + ', ' + (bounds.y / 2 - circle.radius) + ')');
 
+		var rotator = container.append("g");
+
 		layout.nodes(hierarchy);
 
 		force.nodes(layout.nodes(hierarchy)[0].children);
 
-		var node = container.selectAll(".node")
-            .data(force.nodes())
+		var node = rotator.selectAll(".node")
+            .data(layout.nodes(hierarchy))
             .enter().append("g");
         
         var circles = node.append("circle")
@@ -88,89 +90,10 @@
 			.attr("cy", function(d) { return d.y; })
 			.attr("r", function(d) { return d.r; });
 
-		// force.nodes(layout.nodes());
-		
-		function cTick() {
-			circles.each(function(d) {
-				d.pythag = pythag(d) + d.r + 2;
-				d.px = d.x;
-				d.py = d.y;
-				d.y = d.y + d.dy;
-				d.x = d.x + d.dx;
+		d3.timer(function() {
+			// rotator.attr('transform', 'rotate(30)');
+		});
 
-				if (d.pythag > circle.radius) {
-					if (d.y > circle.radius) {
-						d.dy = -2;
-					} else if (d.y < d.r) {
-						d.dy = 2;
-					}
-				}
-			});
-
-			var q = d3.geom.quadtree(force.nodes());
-
-			circles.each(function(d) {
-				// q.visit(collide(d));
-			});
-
-			console.log('tick');
-
-			// move them into new places
-			circles
-				.attr("cx", function (d) { return d.x; })
-				.attr("cy", function (d) { return d.y; });
-
-			
-		}
-
-		cTick();
-
-		d3.timer(cTick);
-
-		force.start();
-
-		// setTimeout(force.stop, 3000);
-	}
-
-	function collide(node) {
-		var r = node.r + 16;
-		var nx1 = node.x - r;
-		var nx2 = node.x + r;
-		var ny1 = node.y - r;
-		var ny2 = node.y + r;
-
-		return function(quad, x1, y1, x2, y2) {
-			if (quad.point && (quad.point !== node)) {
-				if (distance(quad.point, node) < (node.r + quad.point.r)) {
-					if (quad.point.x > node.x) {
-						node.dx = -1;
-					} else {
-						node.dx = 1;
-					}
-
-					if (quad.point.y > node.y) {
-						node.dy = -1;
-					} else {
-						node.dy = 1;
-					}
-				}
-			}
-			return false;
-		};
-}
-
-	function pythag(d) {
-		var x = d.x - circle.radius;
-		var y = d.y - circle.radius;
-		// console.log(x, y);
-		return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-	}
-
-	function distance(d1, d2) {
-		var x = d2.x - d1.x;
-		var y = d2.y - d1.y;
-
-		return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 	}
 
 	function draw() {
