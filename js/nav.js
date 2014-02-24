@@ -188,7 +188,7 @@
 	}
 
 	function onScroll() {
-		var percent = $(window).scrollTop() / ($(document).height() - $(window).height());
+		var percent = $(window).scrollTop() / ($(document).height());
 
 		positionate(percent);
 	}
