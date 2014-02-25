@@ -1,6 +1,8 @@
 (function($, orion) {
 
 	function Gear(parent, options) {
+        var self = this;
+
 		options = options || {};
 
 		this.options = _.defaults(options, {
@@ -9,7 +11,8 @@
 			color: "blue",
 			x: 60,
 			y: 60,
-			addendum: 10
+			addendum: 10,
+            indicator: 'red'
 		});
 
 		var datum = {
@@ -34,23 +37,127 @@
         datum.slopeAngle = datum.pitchAngle * datum.profileSlope * 0.5;
         datum.addendumAngle = datum.pitchAngle * (1 - datum.profileSlope);
         this.datum = datum;
+        this.parent = parent;
 
-        this.gear = parent.append('g')
+        this.gear = this.parent.append('g')
             .attr('class', 'gear')
             .attr('transform', 'translate(' + datum.x + ', ' + datum.y + ')');
 
-        this.path = this.gear.append("svg:path")
+        this.rotator = this.gear.append('g');
+
+        for (var i = 0; i < datum.teeth; i++) {
+            this.gear.append("svg:path")
+                .data([i])
+                .attr('class', 'spoke')
+                .attr("d", makeSpoke(datum, i))
+                .style("stroke-width", 0);
+        }
+
+        this.path = this.rotator.append("svg:path")
             .attr("d", makePath(datum))
             .style("stroke-width", 2)
             .style("stroke", options.color)
             .style("fill", options.color);
 
-		// console.log(this.options);
+        this.rotator.append("svg:path")
+            .attr("d", makeSpoke(datum, datum.teeth - 3))
+            .style("stroke-width", 0)
+            .style('fill', 'red');
+
+        if (options.click) {
+            parent.selectAll('.spoke').on("click", function(d,i) {
+                options.click.call(self, i);
+            });
+        }
+
+        if (options.hover) {
+            parent.selectAll('.spoke').on("mouseover", function(d,i) {
+                options.hover.call(self, i);
+            });
+        }
+
+        if (options.unhover) {
+            parent.selectAll('.spoke').on("mouseout", function(d,i) {
+                options.unhover.call(self, i);
+            });
+        }
+
+        return this;
 	}
 
-	function makePath(d) {
-		console.log(d);
+    Gear.prototype.rotate = function(degrees, time) {
+        var self = this;
+        var duration = time || 1000;
 
+        this.parent.selectAll('.spoke').classed("hidden", true);
+        this.rotator.transition()
+            .duration(duration)
+            .attr("transform", "rotate(" + degrees + ")")
+            .each("end", function() {
+                // only show if on an even
+                if (degrees % 45 === 0) {
+                    self.parent.selectAll('.spoke').classed("hidden", false);
+                }
+            });
+    };
+
+    Gear.prototype.highlight = function(i) {
+       var spoke = this.fetch(i);
+
+        spoke.style("fill", "red");
+    };
+
+    Gear.prototype.fetch = function(spoke) {
+        return this.parent.selectAll('.spoke').filter(function(d, i) { return i == spoke; });
+    };
+
+    function makeSpoke(d, target) {
+        var outsideRadius = d.outsideRadius;
+        var slopeAngle = d.slopeAngle;
+        var theta = (d.addendumAngle * 0.5 + d.slopeAngle);
+        var radius = d.radius;
+        var holeRadius = d.holeRadius;
+        var rootRadius = d.rootRadius;
+        var circularPitch = d.circularPitch;
+        var teeth = d.teeth;
+        var addendumAngle = d.addendumAngle;
+
+        var path = [];
+
+        path.push('M0,0');
+
+        for (var i = 0; i < teeth; i++) {
+            theta += circularPitch;
+
+            if (i == target) {
+                path.push(
+                  'L', d.radius * Math.cos(theta), ',', d.radius * Math.sin(theta)
+                );
+            }
+            
+            
+            theta += slopeAngle;
+            if (i == target) {
+                path.push('L', outsideRadius * Math.cos(theta), ',', outsideRadius * Math.sin(theta));
+            }
+            theta += addendumAngle;
+            if (i == target) {
+                path.push('A', outsideRadius, ',', outsideRadius, ' 0 0,1 ', outsideRadius * Math.cos(theta), ',', outsideRadius * Math.sin(theta));
+            }
+            theta += slopeAngle;
+
+            if (i == target) {
+                path.push(
+                    'L', radius * Math.cos(theta), ',', radius * Math.sin(theta),
+                    'L', rootRadius * Math.cos(theta), ',', rootRadius * Math.sin(theta)
+                );
+            }
+        }
+
+        return path.join('');
+    }
+
+	function makePath(d) {
         var outsideRadius = d.outsideRadius;
         var slopeAngle = d.slopeAngle;
         var theta = (d.addendumAngle * 0.5 + d.slopeAngle);
@@ -86,9 +193,11 @@
         path.push('M0,', -holeRadius, 'A', holeRadius, ',', holeRadius, ' 0 0,0 0,', holeRadius, 'A', holeRadius, ',', holeRadius, ' 0 0,0 0,', -holeRadius, 'Z');
 
         return path.join('');
-    };
+    }
 
 	orion.gears = orion.gears || {
-		create: Gear
+		create: function(parent, options) {
+            return new Gear(parent, options);
+        }
 	};
 }(jQuery, orion));
