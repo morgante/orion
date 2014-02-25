@@ -129,31 +129,28 @@
     }
 
     function collide(node) {
-        var r = node.r + 16;
-        var nx1 = node.x - r;
-        var nx2 = node.x + r;
-        var ny1 = node.y - r;
-        var ny2 = node.y + r;
-
-        return function(quad, x1, y1, x2, y2) {
-            if (quad.point && (quad.point !== node)) {
-                if (distance(quad.point, node) < (node.r + quad.point.r)) {
-                    if (quad.point.x > node.x) {
-                        node.dx = -1;
-                    } else {
-                        node.dx = 1;
-                    }
-
-                    if (quad.point.y > node.y) {
-                        node.dy = -1;
-                    } else {
-                        node.dy = 1;
-                    }
-                }
-            }
-            return false;
-        };
+  var r = node.radius + 16,
+      nx1 = node.x - r,
+      nx2 = node.x + r,
+      ny1 = node.y - r,
+      ny2 = node.y + r;
+  return function(quad, x1, y1, x2, y2) {
+    if (quad.point && (quad.point !== node)) {
+      var x = node.x - quad.point.x,
+          y = node.y - quad.point.y,
+          l = Math.sqrt(x * x + y * y),
+          r = node.radius + quad.point.radius;
+      if (l < r) {
+        l = (l - r) / l;
+        node.x -= x *= l;
+        node.y -= y *= l;
+        quad.point.x += x;
+        quad.point.y += y;
+      }
     }
+    return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+  };
+}
 
     function distance(d1, d2) {
         var x = d2.x - d1.x;
