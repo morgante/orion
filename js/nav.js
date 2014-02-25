@@ -161,6 +161,21 @@
 		$sections.each(function(i, el) {
 			links.push(new Link($(el)));
 		});
+
+		positionate(0);
+		onScroll();
+		$(window).scroll(onScroll);
+	}
+
+	function drawBubbles() {
+		canvas.append("circle")
+            .attr("stroke", "black")
+            .style("fill", "pink")
+            .attr("cx", circle.radius)
+            .attr("cy", circle.radius)
+            .attr("r", circle.radius);
+
+		orion.bubbles.draw(canvas, {});
 	}
 
 	function draw() {
@@ -168,7 +183,8 @@
 			.attr("width", bounds.x)
 			.attr("height", bounds.y);
 
-		drawGear();
+		// drawGear();
+		drawBubbles();
 	}
 
 	function onScroll() {
@@ -182,10 +198,6 @@
 		$sections = $('#nav ul li');
 
 		draw();
-
-		positionate(0);
-		onScroll();
-		$(window).scroll(onScroll);
 	}
 
 	orion.nav = orion.nav || {

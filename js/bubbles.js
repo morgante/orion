@@ -1,40 +1,63 @@
 (function($, orion) {
+    var canvas;
     var container;
     var colors;
-    var hierarchy;
+    var hierarchy = {"dx": 0, "dy": 0, "children": []};
     var layout;
+    var force;
+    var options;
+    var bubbles;
+    var bounds = {};
 
-	function make(parent, options) {
-        container = parent;
+	function make(parent, opts) {
+        canvas = parent;
 
-        drawCircles();
+        options = _.defaults(opts, {
+            radius: 100
+        });
+
+        bounds = {
+            center: {x: options.radius, y: options.radius},
+            top: 0,
+            bottom: options.radius * 2,
+            left: 0,
+            right: options.radius * 2
+        };
+
+        drawbubbles();
     }
 
-    function drawCircles() {
-        var colors = d3.scale.category10();
-        var hierarchy = {"dx": 0, "dy": 0, "children": []};
-        var layout = d3.layout.pack()
+    function drawbubbles() {
+        colors = d3.scale.category10();
+        
+        layout = d3.layout.pack()
             .sort(null)
-            .size([circle.radius * 2, circle.radius * 2])
+            .size([options.radius * 2, options.radius * 2])
             .padding(10);
 
-        var force = d3.layout.force()
+        force = d3.layout.force()
             .gravity(0)
             .charge(0)
             .friction(1)
-            .size([circle.radius * 2, circle.radius * 2]);
+            .size([options.radius * 2, options.radius * 2]);
 
         for (var i = 0; i < 5; i++) {
             hierarchy.children.push({
                 "value": Math.floor((Math.random()*10)+1),
                 "color": colors(i),
                 dx: 0,
-                dy: -2
+                dy: 2
             });
         }
 
-        var container = canvas.append("g")
-            .attr('transform', 'translate(' + (bounds.x / 2 - circle.radius) + ', ' + (bounds.y / 2 - circle.radius) + ')');
+        canvas.append("circle")
+                    .attr("stroke", "black")
+                    .style("fill", "orange")
+                    .attr("cx", bounds.center.x)
+                    .attr("cy", bounds.center.y)
+                    .attr("r", 5);
+
+        container = canvas.append("g");
 
         layout.nodes(hierarchy);
 
@@ -44,7 +67,7 @@
             .data(force.nodes())
             .enter().append("g");
         
-        var circles = node.append("circle")
+        bubbles = node.append("circle")
             .attr("stroke", "black")
             .attr("stroke-width", 0)
             .style("fill", function(d) { return d.color; })
@@ -52,80 +75,57 @@
             .attr("cy", function(d) { return d.y; })
             .attr("r", function(d) { return d.r; });
 
-        // force.nodes(layout.nodes());
-        
-        function cTick() {
-            circles.each(function(d) {
-                d.theta = angle(d);
+        d3.timer(tick);
 
-                if (d.y < d.r) {
-                    d.dy = 0;
-                    d.y = d.r;
-                }
-
-                if (d.y < circle.radius) {
-                    var eX = circle.radius + circle.radius * Math.sin(d.theta);
-                    var eY = circle.radius - (circle.radius * Math.sin(d.theta));
-
-                    if (d.x > eX) {
-                        d.dx = -d.r;
-                    } else if (d.x < eX) {
-                        d.dx = d.r;
-                    } else {
-                        d.dx = 0;
-                    }
-
-                    if (d.y < eY) {
-                        d.dY = 2;
-                    } else {
-                        d.dY = 0;
-                    }
-                    
-                }
-
-                d.px = d.x;
-                d.py = d.y;
-                d.y = d.y + d.dy;
-                d.x = d.x + d.dx;
-
-
-                // if (d.x < circle.radius) {
-                    // d.dx = 0;
-                // }
-
-                // if (d.x > eX) {
-                    // d.x = eX + d.r;
-                    // d.dx = 0;
-                // }
-            });
-
-            var q = d3.geom.quadtree(force.nodes());
-
-            circles.each(function(d) {
-                q.visit(collide(d));
-            });
-
-            // move them into new places
-            circles
-                .attr("cx", function (d) { return d.x; })
-                .attr("cy", function (d) { return d.y; });
-
-            
-        }
-
-        cTick();
-
-        // d3.timer(cTick);
-
-        force.on("tick", cTick);
+        // force.on("tick", tick);
 
         force.start();
 
-        setTimeout(force.stop, 3000);
+        // setTimeout(force.stop, 3000);
+    }
+
+    function tick() {
+        bubbles.each(function(d) {
+            d.theta = angle(d);
+            d.px = d.x;
+            d.py = d.y;
+            d.y = d.y + d.dy;
+            d.x = d.x + d.dx;
+            d.distance = distance(d, bounds.center) + d.r;
+
+            if (d.distance > options.radius) {
+                if (d.x < options.radius) {
+                    d.dx = 2;
+                } else {
+                    d.dx = -2;
+                }
+
+                if (d.y < options.radius) {
+                    d.dy = 2;
+                } else {
+                    d.dy = -2;
+                }
+            } else {
+                d.dx = 0;
+                d.dy = 1;
+            }
+        });
+
+        var q = d3.geom.quadtree(force.nodes());
+
+        bubbles.each(function(d) {
+            q.visit(collide(d));
+        });
+
+        // move them into new places
+        bubbles
+            .attr("cx", function (d) { return d.x; })
+            .attr("cy", function (d) { return d.y; });
+
     }
 
     function angle(d) {
-        return Math.atan(d.y / (d.x - circle.radius));
+        return Math.atan2(d.y - bounds.center.y, d.x - bounds.center.x);
     }
 
     function collide(node) {
@@ -162,16 +162,7 @@
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
     }
 
-    function draw() {
-        canvas = d3.select("#nav").append("svg")
-            .attr("width", bounds.x)
-            .attr("height", bounds.y);
-
-        drawGear();
-        drawCircles();
-    }
-
 	orion.bubbles = orion.bubbles || {
-		make: make
+		draw: make
 	};
 }(jQuery, orion));
