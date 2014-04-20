@@ -436,6 +436,10 @@ ul.elsewhere li.delicious a {
 	background-image: url('../images/sites/delicious-24x24.png');
 }
 
+ul.elsewhere li.github a {
+	background-image: url('../images/sites/github-24x24.png');
+}
+
 ul.elsewhere li.facebook a {
 	background-image: url('../images/sites/facebook-24x24.png');
 }
