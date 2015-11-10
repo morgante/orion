@@ -9,11 +9,11 @@
 	
 		<meta name="generator" content="Habari">
 
-		<link rel="openid.server" href="http://www.myopenid.com/server" />
-		<link rel="openid.delegate" href="http://arthus.myopenid.com/" />
-		<link rel="openid2.local_id" href="http://arthus.myopenid.com" />
-		<link rel="openid2.provider" href="http://www.myopenid.com/server" />
-		<meta http-equiv="X-XRDS-Location" content="http://www.myopenid.com/xrds?username=arthus.myopenid.com" />
+		<link rel="openid.server" href="https://indieauth.com/openid" />
+		<link rel="openid.delegate" href="http://morgante.net" />
+
+		<link href="https://twitter.com/morgantepell" rel="me">
+		<link href="https://github.com/morgante" rel="me">
 
 		<?php echo $theme->header(); ?>
 		
